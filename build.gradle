@@ -1,0 +1,30 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'distribution'
+    id "com.github.johnrengelman.shadow" version "6.1.0"
+}
+
+version '0.5v'
+
+repositories {
+    mavenCentral()
+    maven { url 'https://www.jitpack.io' }
+}
+
+application {
+    mainClassName = 'BetterCommands'
+}
+
+ext {
+    versions = [
+            javacord  : '3.1.2',
+            mindustry : 'v123'
+    ]
+}
+
+// The use of javacord is for a future discord implementation.
+dependencies {
+    implementation "org.javacord:javacord:${versions.javacord}"
+    implementation "com.github.Anuken.Mindustry:core:${versions.mindustry}"
+}
