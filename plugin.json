@@ -1,7 +1,7 @@
 {
     "name": "BetterCommands",
     "author": "Xasmedy",
-    "main": "main.java.BetterCommands",
-    "description": "The scope of this plugin is to make available console commands to admin.",
+    "main": "BetterCommands",
+    "description": "Make available console commands for admins.",
     "version": 0.5
 }
