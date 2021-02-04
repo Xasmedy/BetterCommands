@@ -4,6 +4,7 @@
 import arc.struct.ObjectSet;
 import arc.util.CommandHandler;
 import arc.util.Log;
+
 import mindustry.gen.Call;
 import mindustry.gen.Groups;
 import mindustry.gen.Player;
@@ -11,7 +12,14 @@ import mindustry.mod.Plugin;
 import mindustry.net.Administration;
 import mindustry.net.Packets;
 
+// WaveManager Depedencies
+import arc.Events;
+import mindustry.game.Team;
+import mindustry.game.EventType.*;
 import static mindustry.Vars.netServer;
+import static mindustry.Vars.state;
+import static mindustry.Vars.logic;
+import static mindustry.Vars.spawner;
 
 public class BetterCommands extends Plugin {
 
@@ -116,6 +124,45 @@ public class BetterCommands extends Plugin {
                     }
                 } else admin.sendMessage("[scarlet]The value is not valid, please use an IP.");
             }
+        });
+
+        // WaveManager Commands
+        handler.<Player>register("runwave", "<count...>", "Trigger the next waves.", (args, player) -> {
+            if (player.admin) {
+                int w = Integer.parseInt(args[0]);
+                if (0 < w && w <= 10) {
+                    for (int i = 0; i < w; i++) logic.runWave();
+                    Call.sendMessage("[scarlet]WARNING: [accent]" + args[0] + " wave" + ((w == 1) ? "" : "s") + " spawned.");
+                } else player.sendMessage("[scarlet]The wave count have to be between 1 and 10. Going higher may crash the server.");
+            } else player.sendMessage("[scarlet]Sorry, this command is for admins only.");
+        });
+
+        handler.<Player>register("repeatwave", "<count...>", "Repeat the current wave.", (args, player) -> {
+            if (player.admin) {
+                int w = Integer.parseInt(args[0]);
+                if (0 < w && w <= 10) {
+                    for (int i = 0; i < w; i++) {
+                    spawner.spawnEnemies();
+                    Events.fire(new WaveEvent());
+                    } Call.sendMessage("[scarlet]WARNING: [accent]The wave " + state.wave + " have been triggered " + args[0] + " time" + ((w == 1) ? "" : "s") + ".");
+                } else player.sendMessage("[scarlet]The wave count have to be between 1 and 10. Going higher may crash the server.");
+            } else player.sendMessage("[scarlet]Sorry, this command is for admins only.");
+        });
+
+        handler.<Player>register("jumpwave", "<wave...>", "Jump to a specific wave.", (args, player) -> {
+            if (player.admin) {
+                int w = Integer.parseInt(args[0]);
+                state.wave = w;
+                state.wavetime = state.rules.waveSpacing;
+                Call.sendMessage("[scarlet]WARNING: [accent]Jumped to wave " + args[0] + ".");
+            } else player.sendMessage("[scarlet]Sorry, this command is for admins only.");
+        });
+
+    	handler.<Player>register("gameover", "Force a gameover.", (args, player) -> {
+            if (player.admin) {
+                Events.fire(new GameOverEvent(Team.crux));
+                Call.sendMessage("[scarlet]GAMEOVER: [accent]nice run people.");
+            } else player.sendMessage("[scarlet]Sorry, this command is for admins only.");
         });
     }
 }

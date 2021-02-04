@@ -1,5 +1,5 @@
 # BetterCommands - Mindustry Plugin.
-The scope of this plugin is to maka available console commands to admin. These are all the commands the plugin has now:
+The scope of this plugin is to make available console commands to admin. These are all the commands the plugin has now:
 
 - Info
 > Get the player info of his IP / UUID

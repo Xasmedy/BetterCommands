@@ -1,0 +1,7 @@
+{
+    "name": "BetterCommands",
+    "author": "Xasmedy",
+    "main": "BetterCommands",
+    "description": "Make available console commands for admins.",
+    "version": 0.5
+}
