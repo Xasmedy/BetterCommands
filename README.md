@@ -21,7 +21,11 @@ The plugin was planed to be made only for the *mindustry.ddns.net* server but I 
 
 Search the `config` inside this folder you will see `mods` put the jar downloaded inside and start the server. All commands will be ready and for more info you can do */help* in chat.
 
+---
+
 If you want to change the "DDNS.net" prefix, you need to go inside the Util class and modify the `public static final namePrefix`. Time you did it open a terminal and build the jar with `gradle jar`, once you did it the jar will be inside the `build/libs` folder. _(In the future change it will be way easier)_
+
+For Mindustry help you can look [here](https://github.com/Anuken/Mindustry/blob/master/README.md).
 
 ### Requirement
 
