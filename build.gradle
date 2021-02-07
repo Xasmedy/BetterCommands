@@ -5,7 +5,7 @@ plugins {
     id "com.github.johnrengelman.shadow" version "6.1.0"
 }
 
-version '0.5v'
+version '0.6v'
 
 repositories {
     mavenCentral()
@@ -13,7 +13,7 @@ repositories {
 }
 
 application {
-    mainClassName = 'BetterCommands'
+    mainClassName = 'xasmedy.BetterCommands'
 }
 
 ext {
@@ -23,7 +23,7 @@ ext {
     ]
 }
 
-// The use of javacord is for a future discord implementation.
+// The use of javaCord is for a future discord implementation.
 dependencies {
     implementation "org.javacord:javacord:${versions.javacord}"
     implementation "com.github.Anuken.Mindustry:core:${versions.mindustry}"
