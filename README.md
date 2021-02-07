@@ -29,7 +29,7 @@ For Mindustry help you can look [here](https://github.com/Anuken/Mindustry/blob/
 
 ### Requirement
 
-- Java 15
-- Mindustry 123v
+- [JDK 15](https://adoptopenjdk.net/)
+- [Mindustry 123v](https://anuke.itch.io/mindustry)
 
 _If you want to be able use our plugin, you need to give credits to mindustry.ddns.net in your server, else you are a bad person and I will stop release public updates._
