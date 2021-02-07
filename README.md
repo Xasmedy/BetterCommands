@@ -1,19 +1,29 @@
 # BetterCommands - Mindustry Plugin.
-The scope of this plugin is to make available console commands to admin. These are all the commands the plugin has now:
+[mindustry.ddns.net - Discord](https://discord.gg/6gaRWsp).
+
+The scope of this plugin is to make available some console commands for admins. But there'll be more commands available for moderation and even players.
+
+This plugin was planed to be made only for *mindustry.ddns.net* but I decided to make it public but get credits.
+
+### Available commands:
 
 - Info
-> Get the player info of his IP / UUID
-
 - Ban
-> Ban every IP a player has.
-
 - Unban
-> Unban every IP a player has.
-
-
-This bot is made for *mindustry.ddns.net* [Discord](https://discord.gg/6gaRWsp).
-If you want to use our plugin, you need to give credits to it in your server, else you are a bad person.
+- Kick
+- Pause
+- Runwave
+- Repeatwave
+- Jumpwave
+- Gameover
 
 ## How to use
 
-Put the plugin inside the `mods` folder, start the server and all commands should appear in the /help command.
+Search the `config` folder, inside it there is the `mods` folder, but the jar downloaded inside and start the server. All commands should appear be ready, you can do */help* for more info.
+
+### Requirement
+
+- Java 15
+- Mindustry 123v
+
+_If you want to be able use our plugin, you need to give credits to mindustry.ddns.net in your server, else you are a bad person and I will stop release public updates._
