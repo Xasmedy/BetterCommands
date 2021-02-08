@@ -41,6 +41,7 @@ public class BanCommand {
                     int i = 1;
 
                     // Get IPs.
+                    // Get IPs.
                     for (PlayerInfo playerInfo : information) {
 
                         String[] ips = playerInfo.ips.toString().replace(" ", "")
@@ -54,14 +55,18 @@ public class BanCommand {
                             Log.info(ip + " is banned by " + admin.name + " (" + admin.ip() + ")");
                             admin.sendMessage(namePrefix + "[accent]" + ip + " [white]is [scarlet]banned. [gold][" + i++ + "]");
 
-                            // Kick banned IPs.
-                            for (Player player : Groups.player) {
+                        }
 
-                                if (player.ip().equals(ip)) {
+                        // Kick banned IPs.
+                        for (Player player : Groups.player) {
 
-                                    player.con.kick(reason("banned", args, admin));
-                                    Call.sendMessage(namePrefix + "[scarlet]" + player.name + " [scarlet]has been banned by " + admin.name);
-                                }
+                            if (player.getInfo().banned) {
+
+
+                                if (player.getInfo().timesJoined > 30)
+                                    
+                                player.con.kick(reason("banned", args, admin));
+                                Call.sendMessage(namePrefix + "[scarlet]" + player.name + " [scarlet]has been banned by " + admin.name);
                             }
                         }
                     }
