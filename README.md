@@ -1,6 +1,8 @@
 # BetterCommands - Mindustry Plugin.
 [mindustry.ddns.net - Discord](https://discord.gg/6gaRWsp).
 
+### The plugin will not receive more updated.
+
 The scope of this plugin is make available some console commands for admins. But there will be new commands available for moderation and even players!
 
 The plugin was planed to be made only for the *mindustry.ddns.net* server but I decided to make it public and get credits.
@@ -32,4 +34,4 @@ For Mindustry help you can look [here](https://github.com/Anuken/Mindustry/blob/
 - [JDK 15](https://adoptopenjdk.net/)
 - [Mindustry 123v](https://anuke.itch.io/mindustry)
 
-_If you want to be able use our plugin, you need to give credits to mindustry.ddns.net in your server, else you are a bad person and I will stop release public updates._
+_If you want to be able use our plugin, you need to give credits to mindustry.ddns.net in your server._
