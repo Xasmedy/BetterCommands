@@ -1,10 +1,9 @@
 # BetterCommands - Mindustry Plugin.
 [mindustry.ddns.net - Discord](https://discord.gg/6gaRWsp).
 
-### The plugin will not receive more updated.
+### The plugin will not receive more updates.
 
 The scope of this plugin is make available some console commands for admins. But there will be new commands available for moderation and even players!
-
 The plugin was planed to be made only for the *mindustry.ddns.net* server but I decided to make it public and get credits.
 
 ### Available commands:
@@ -21,17 +20,15 @@ The plugin was planed to be made only for the *mindustry.ddns.net* server but I 
 
 ## How to use
 
-Search the `config` inside this folder you will see `mods` put the jar downloaded inside and start the server. All commands will be ready and for more info you can do */help* in chat.
+Where you have the jar file, search a folder called `config`, inside it you will find another folder called `mods`, put the BetterCommands jar in there, and start the server. Once the server starts, all commands will be loaded and ready for be used, you can see the commands list by doing */help* in chat.
 
 ---
 
-If you want to change the "DDNS.net" prefix, you need to go inside the Util class and modify the `public static final namePrefix`. Time you did it open a terminal and build the jar with `gradle jar`, once you did it the jar will be inside the `build/libs` folder. _(In the future change it will be way easier)_
+If you want to change the prefix, you need to go inside the Util class and modify the `public static final namePrefix`. Once you do it, build the project and get the jar from the builded folder. For buildind the project you need to do `gradle jar` inside the IDE or your terminal.
 
 For Mindustry help you can look [here](https://github.com/Anuken/Mindustry/blob/master/README.md).
 
-### Requirement
+### Minimum Requirements
 
 - [JDK 15](https://adoptopenjdk.net/)
 - [Mindustry 123v](https://anuke.itch.io/mindustry)
-
-_If you want to be able use our plugin, you need to give credits to mindustry.ddns.net in your server._
