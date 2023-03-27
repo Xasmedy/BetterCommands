@@ -1,31 +1,39 @@
+/*
+ * Copyright (c) 2023 - Xasmedy.
+ * This file is part of the BetterCommands Project licensed under GNU-GPLv3.
+ *
+ * The Project source-code can be found at https://github.com/Xasmedy/BetterCommands
+ * Contributors of this file may put their name into the copyright notice.
+ */
+
 package xasmedy.bettercommands.commands.admin;
 
-import arc.util.Log;
+import arc.util.CommandHandler;
+import mindustry.core.GameState;
 import mindustry.gen.Call;
 import mindustry.gen.Player;
-import xasmedy.bettercommands.Util;
-
+import xasmedy.bettercommands.commands.Command;
 import static mindustry.Vars.state;
+import static xasmedy.bettercommands.Util.PREFIX;
 
-public class PauseCommand {
+public class PauseCommand implements Command {
 
-    public static void onPauseCommand(String[] args, Player admin) {
+    private static final String PAUSE_MESSAGE = "%s[orange]The game has been %spaused by [gold]%s";
 
-        if (admin.admin && args.length > 0) {
+    private void commandAction(String[] lazy, Player player) {
 
-            if (!state.serverPaused && args[0].equalsIgnoreCase("on")) {
-
-                Call.sendMessage(Util.namePrefix + "[accent]The game has been paused by " + admin.name);
-                Log.info("Game paused by " + admin.name);
-                state.serverPaused = true;
-
-            } else if (state.serverPaused && args[0].equalsIgnoreCase("off")) {
-
-                Call.sendMessage(Util.namePrefix + "[accent]The game has been unpaused by " + admin.name);
-                Log.info("Game unpaused by " + admin.name);
-                state.serverPaused = false;
-
-            } else admin.sendMessage(Util.namePrefix + "[scarlet]You can't pause/unpause if a server is already paused/unpaused.");
+        if (!player.admin) {
+            // TODO No permissions.
+            return;
         }
+
+        final String message = String.format(PAUSE_MESSAGE, PREFIX, state.isPaused() ? "un-" : "", player.plainName());
+        state.set(state.isPaused() ? GameState.State.playing : GameState.State.paused);
+        Call.sendMessage(message);
+    }
+
+    @Override
+    public void registerClientCommands(CommandHandler handler) {
+        handler.register("pause", "Pauses/Unpauses the game.", this::commandAction);
     }
 }

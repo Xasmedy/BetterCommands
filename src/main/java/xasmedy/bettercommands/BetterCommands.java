@@ -1,8 +1,12 @@
-// Author: Xasmedy
-// The code can be copied and used, but if you want use the plugin you need to give credits to mindustry.ddns.net
+/*
+ * Copyright (c) 2023 - Xasmedy.
+ * This file is part of the BetterCommands Project licensed under GNU-GPLv3.
+ *
+ * The Project source-code can be found at https://github.com/Xasmedy/BetterCommands
+ * Contributors of this file may put their name into the copyright notice.
+ */
 
 package xasmedy.bettercommands;
-import mindustry.gen.Player;
 import xasmedy.bettercommands.commands.admin.*;
 import arc.util.CommandHandler;
 import mindustry.mod.Plugin;
@@ -19,14 +23,9 @@ public class BetterCommands extends Plugin {
 
         handler.register("kick", "<Name/UUID/IP> [Reasons...]", "Kick an IP.", KickCommand::onKickCommand);
 
-        handler.register("pause", "<On/Off>", "Pause the server.", PauseCommand::onPauseCommand);
-
-        handler.register("runwave", "<count...>", "Trigger the next waves.", RunWaveCommand::onRunWaveCommand);
-
-        handler.register("repeatwave", "<count...>", "Repeat the current wave.", RepeatWaveCommand::onRepeatWave);
-
-        handler.register("jumpwave", "<Wave...>", "Jump to a specific wave.", JumpWaveCommand::onJumpWave);
-
-        handler.register("gameover", "Force a GameOver.", (String[] args, Player admin) -> GameOverCommand.onGameOverCommand(admin));
+        // TODO Add these info inside the help menu of the wave command.
+        //handler.register("runwave", "<count...>", "Trigger the next waves.", RunWaveCommand::onRunWaveCommand);
+        //handler.register("repeatwave", "<count...>", "Repeat the current wave.", RepeatWaveCommand::onRepeatWave);
+        //handler.register("jumpwave", "<Wave...>", "Jump to a specific wave.", JumpWaveCommand::onJumpWave);
     }
 }

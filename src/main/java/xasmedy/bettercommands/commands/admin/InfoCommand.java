@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2023 - Xasmedy.
+ * This file is part of the BetterCommands Project licensed under GNU-GPLv3.
+ *
+ * The Project source-code can be found at https://github.com/Xasmedy/BetterCommands
+ * Contributors of this file may put their name into the copyright notice.
+ */
+
 package xasmedy.bettercommands.commands.admin;
 
 import arc.util.Log;
@@ -7,6 +15,7 @@ import xasmedy.bettercommands.Util;
 
 import java.util.ArrayList;
 
+// TODO Refactor using menus.
 public class InfoCommand {
 
     public static void onInfoCommand(String[] args, Player admin) {
@@ -21,7 +30,7 @@ public class InfoCommand {
                 Log.info("Admin: " + admin.name + " required information of the player: " + information.get(0).lastName + "/" + information.get(0).lastIP);
 
                 admin.sendMessage("[white]---------------------------------\n" +
-                        Util.namePrefix + "[gold]Player(s) found: [white]" + information.size());
+                        Util.PREFIX + "[gold]Player(s) found: [white]" + information.size());
 
                 // Counter of how much info-list found.
                 int i = 1;
@@ -37,7 +46,7 @@ public class InfoCommand {
                             "\n[white] - Banned: [orange]" + playerInfo.banned +
                             "\n[white]---------------------------------");
                 }
-            } else admin.sendMessage(Util.namePrefix + "[scarlet]Nobody could be found, check if you did any mistakes.");
+            } else admin.sendMessage(Util.PREFIX + "[scarlet]Nobody could be found, check if you did any mistakes.");
         }
     }
 }

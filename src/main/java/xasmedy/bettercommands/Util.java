@@ -1,3 +1,11 @@
+/*
+ * Copyright (c) 2023 - Xasmedy.
+ * This file is part of the BetterCommands Project licensed under GNU-GPLv3.
+ *
+ * The Project source-code can be found at https://github.com/Xasmedy/BetterCommands
+ * Contributors of this file may put their name into the copyright notice.
+ */
+
 package xasmedy.bettercommands;
 
 import arc.struct.ObjectSet;
@@ -11,7 +19,8 @@ import static mindustry.Vars.netServer;
 public class Util {
 
     // Be careful to leave a space at the end.
-    public final static String namePrefix = "[orange]DDNS.net: ";
+    // TODO Move this into a configuration file.
+    public final static String PREFIX = "[orange]BetterCommands [gray]>> ";
 
     // Make the reason for a kick.
     public static String reason(String kickType, String[] args, Player admin) {
