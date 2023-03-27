@@ -5,7 +5,9 @@ plugins {
     id "com.github.johnrengelman.shadow" version "6.1.0"
 }
 
-version '0.6v'
+sourceCompatibility = JavaVersion.VERSION_17
+
+version 'v0.7'
 
 repositories {
     mavenCentral()
@@ -17,14 +19,9 @@ application {
 }
 
 ext {
-    versions = [
-            javacord  : '3.1.2',
-            mindustry : 'v123'
-    ]
+    mindustry = 'v142'
 }
 
-// The use of javaCord is for a future discord implementation.
 dependencies {
-    implementation "org.javacord:javacord:${versions.javacord}"
-    implementation "com.github.Anuken.Mindustry:core:${versions.mindustry}"
+    implementation "com.github.Anuken.Mindustry:core:${mindustry}"
 }

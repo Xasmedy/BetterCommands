@@ -1,10 +1,12 @@
 # BetterCommands - Mindustry Plugin.
 [mindustry.ddns.net - Discord](https://discord.gg/6gaRWsp).
 
-### The plugin will not receive more updates.
+### Plugin v7 update.
 
-The scope of this plugin is make available some console commands for admins. But there will be new commands available for moderation and even players!
-The plugin was planed to be made only for the *mindustry.ddns.net* server but I decided to make it public and get credits.
+After some incentives I decided to update this plugin to the latest version of Mindustry.<br>
+Naturally I will re-write the code to take advantage of the new features and I will likely add new commands.
+
+## The information bellow might be outdated.
 
 ### Available commands:
 
@@ -30,5 +32,5 @@ For Mindustry help you can look [here](https://github.com/Anuken/Mindustry/blob/
 
 ### Minimum Requirements
 
-- [JDK 15](https://adoptopenjdk.net/)
-- [Mindustry 123v](https://anuke.itch.io/mindustry)
+- [JDK 17](https://jdk.java.net/archive/)
+- [Mindustry v142](https://anuke.itch.io/mindustry)
