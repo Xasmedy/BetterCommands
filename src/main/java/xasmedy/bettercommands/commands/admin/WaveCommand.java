@@ -11,6 +11,7 @@ package xasmedy.bettercommands.commands.admin;
 import arc.Events;
 import arc.util.CommandHandler;
 import arc.util.Strings;
+import mindustry.Vars;
 import mindustry.game.EventType;
 import mindustry.gen.Call;
 import mindustry.gen.Player;
@@ -19,30 +20,31 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.function.BiConsumer;
-import static mindustry.Vars.*;
 import static xasmedy.bettercommands.Util.PREFIX;
 
 public class WaveCommand implements Command {
 
     private static final int MAX_WAVES = 20;
     private static final String INVALID_NUMBER_ERROR = "%s[scarlet]The inserted value [sky]%s[] is not a valid number.";
-    private static final String MAX_WAVES_OVERFLOW_ERROR = "%s[scarlet]You can not spawn more than [orange]" + MAX_WAVES + "[] waves cause lag. [gray]([accent]%d[])";
+    private static final String MAX_WAVES_OVERFLOW_ERROR = "%s[scarlet]You can not spawn more than [orange]" + MAX_WAVES + "[] waves. [gray]([accent]%d[])";
     private static final String NO_VALUE_JUMP_WAVE_ERROR = "%s[scarlet]Please provide the wave to jump to.";
-    private static final String RUN_WAVE_MESSAGE = "%s[red]WARNING! [sky]%d[orange] wave%s been spawned by [gold]%s[].";
-    private static final String JUMP_WAVE_MESSAGE = "%s[red]WARNING! [orange]Jumped to wave [sky]%d[] by [gold]%s[orange].";
-    private static final String REPEAT_WAVE_MESSAGE = "%s[red]WARNING! [orange]The wave [sky]%d[] has been repeated [sky]%d time%s by [gold]%s[orange].";
+    private static final String RUN_WAVE_MESSAGE = "%s[sky]%d[red] wave%s been spawned by [gold]%s[].";
+    private static final String JUMP_WAVE_MESSAGE = "%s[red]Jumped to wave [sky]%d[] by [gold]%s[red].";
+    private static final String REPEAT_WAVE_MESSAGE = "%s[red]The wave [sky]%d[] has been repeated [sky]%d[red] time%s by [gold]%s[].";
     private final HashMap<String, BiConsumer<String[], Player>> actions = new HashMap<>();
 
     public WaveCommand() {
+
         // TODO Help action.
         actions.put("run", (String[] args, Player admin) -> {
 
             if (args.length == 1) {
-                runWaves(player, 1); // Default.
+                runWaves(admin, 1); // Default.
                 return;
             }
-            getIntFromInput(admin, args[2]).ifPresent(waves -> runWaves(player, waves));
+            getIntFromInput(admin, args[1]).ifPresent(waves -> runWaves(admin, waves));
         });
+
         actions.put("jump", (String[] args, Player admin) -> {
 
             if (args.length == 1) {
@@ -50,23 +52,25 @@ public class WaveCommand implements Command {
                 admin.sendMessage(message);
                 return;
             }
-            getIntFromInput(admin, args[2]).ifPresent(wave -> jumpToWave(player, wave));
+            getIntFromInput(admin, args[1]).ifPresent(wave -> jumpToWave(admin, wave));
         });
+
         actions.put("repeat", (String[] args, Player admin) -> {
 
             if (args.length == 1) {
-                repeatWave(player, 1); // Default.
+                repeatWave(admin, 1); // Default.
                 return;
             }
-            getIntFromInput(admin, args[2]).ifPresent(repetitions -> repeatWave(player, repetitions));
+            getIntFromInput(admin, args[1]).ifPresent(repetitions -> repeatWave(admin, repetitions));
         });
+
         actions.put("skip", (String[] args, Player admin) -> {
 
             if (args.length == 1) {
-                jumpToWave(admin, state.wave + 1); // Default.
+                jumpToWave(admin, Vars.state.wave + 1); // Default.
                 return;
             }
-            getIntFromInput(admin, args[2]).ifPresent(wave -> jumpToWave(player, state.wave + wave));
+            getIntFromInput(admin, args[1]).ifPresent(wave -> jumpToWave(admin, Vars.state.wave + wave));
         });
     }
 
@@ -92,15 +96,15 @@ public class WaveCommand implements Command {
             return;
         }
 
-        for (int i = 0; i < waves; i++) logic.runWave();
+        for (int i = 0; i < waves; i++) Vars.logic.runWave();
         final String message = String.format(RUN_WAVE_MESSAGE, PREFIX, waves, waves == 1 ? " has" : "s have", admin.plainName());
         Call.sendMessage(message);
     }
 
     private void jumpToWave(Player admin, int newWave) {
 
-        state.wave = newWave;
-        state.wavetime = state.rules.waveSpacing;
+        Vars.state.wave = newWave;
+        Vars.state.wavetime = Vars.state.rules.waveSpacing;
 
         final String message = String.format(JUMP_WAVE_MESSAGE, PREFIX, newWave, admin.plainName());
         Call.sendMessage(message);
@@ -115,11 +119,11 @@ public class WaveCommand implements Command {
         }
 
         for (int i = 0; i < repetitions; i++) {
-            spawner.spawnEnemies();
+            Vars.spawner.spawnEnemies();
             Events.fire(new EventType.WaveEvent());
         }
 
-        final String message = String.format(REPEAT_WAVE_MESSAGE, PREFIX, state.wave, repetitions, repetitions == 1 ? "" : "s", admin.plainName());
+        final String message = String.format(REPEAT_WAVE_MESSAGE, PREFIX, Vars.state.wave, repetitions, repetitions == 1 ? "" : "s", admin.plainName());
         Call.sendMessage(message);
     }
 

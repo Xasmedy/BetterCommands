@@ -18,7 +18,7 @@ import static xasmedy.bettercommands.Util.PREFIX;
 
 public class PauseCommand implements Command {
 
-    private static final String PAUSE_MESSAGE = "%s[orange]The game has been %spaused by [gold]%s";
+    private static final String PAUSE_MESSAGE = "%s[red]The game has been %spaused by [gold]%s";
 
     private void commandAction(String[] lazy, Player player) {
 

@@ -7,13 +7,36 @@
  */
 
 package xasmedy.bettercommands;
+import xasmedy.bettercommands.commands.Command;
 import xasmedy.bettercommands.commands.admin.*;
 import arc.util.CommandHandler;
 import mindustry.mod.Plugin;
+import java.util.HashSet;
 
 public class BetterCommands extends Plugin {
 
+    private final HashSet<Command> commands = new HashSet<>();
+
+    public BetterCommands() {
+        commands.add(new GameOverCommand());
+        commands.add(new PauseCommand());
+        commands.add(new WaveCommand());
+    }
+
+    @Override
+    public void init() {
+        commands.forEach(Command::init);
+    }
+
+    @Override
+    public void registerServerCommands(CommandHandler handler) {
+        commands.forEach(command -> command.registerServerCommands(handler));
+    }
+
+    @Override
     public void registerClientCommands(CommandHandler handler) {
+
+        commands.forEach(command -> command.registerClientCommands(handler));
 
         handler.register("info", "<Name/UUID/IP>", "Get all the player information.", InfoCommand::onInfoCommand);
 

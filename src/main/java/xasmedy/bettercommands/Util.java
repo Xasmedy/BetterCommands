@@ -11,16 +11,14 @@ package xasmedy.bettercommands;
 import arc.struct.ObjectSet;
 import mindustry.gen.Player;
 import mindustry.net.Administration;
-
 import java.util.ArrayList;
-
 import static mindustry.Vars.netServer;
 
 public class Util {
 
     // Be careful to leave a space at the end.
     // TODO Move this into a configuration file.
-    public final static String PREFIX = "[orange]BetterCommands [gray]>> ";
+    public final static String PREFIX = "[orange]BetterComm [gray]>> ";
 
     // Make the reason for a kick.
     public static String reason(String kickType, String[] args, Player admin) {
