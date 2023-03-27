@@ -5,18 +5,14 @@ plugins {
     id "com.github.johnrengelman.shadow" version "6.1.0"
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-
-version 'v0.7'
-
 repositories {
     mavenCentral()
     maven { url 'https://www.jitpack.io' }
 }
 
-application {
-    mainClassName = 'xasmedy.BetterCommands'
-}
+sourceCompatibility = JavaVersion.VERSION_17
+version 'v0.7'
+mainClassName = "xasmedy.bettercommands.BetterCommands"
 
 ext {
     mindustry = 'v142'
