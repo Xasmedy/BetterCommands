@@ -21,6 +21,8 @@ public class BetterCommands extends Plugin {
         commands.add(new GameOverCommand());
         commands.add(new PauseCommand());
         commands.add(new WaveCommand());
+        commands.add(new PlayerInfoCommand());
+        commands.add(new SpawnUnitCommand());
     }
 
     @Override
@@ -38,7 +40,7 @@ public class BetterCommands extends Plugin {
 
         commands.forEach(command -> command.registerClientCommands(handler));
 
-        handler.register("info", "<Name/UUID/IP>", "Get all the player information.", InfoCommand::onInfoCommand);
+        handler.register("info", "<Name/UUID/IP>", "Get all the player information.", PlayerInfoCommand::onInfoCommand);
 
         handler.register("ban", "<Name/UUID/IP> [Reasons...]", "Ban all the IPs a player has.", BanCommand::onBanCommand);
 

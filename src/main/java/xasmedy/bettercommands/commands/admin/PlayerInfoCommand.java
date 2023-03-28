@@ -8,15 +8,42 @@
 
 package xasmedy.bettercommands.commands.admin;
 
+import arc.util.CommandHandler;
 import arc.util.Log;
+import mindustry.gen.Call;
 import mindustry.gen.Player;
+import mindustry.ui.Menus;
 import xasmedy.bettercommands.PlayerInfo;
 import xasmedy.bettercommands.Util;
+import xasmedy.bettercommands.commands.Command;
 
 import java.util.ArrayList;
 
 // TODO Refactor using menus.
-public class InfoCommand {
+public class PlayerInfoCommand implements Command {
+
+    private final int menuId;
+    private final String[][] options;
+
+    public PlayerInfoCommand() {
+        this.menuId = Menus.registerMenu(this::menuHandler);
+        final String[] firstLine = new String[] {"[sky]<--", "[sky]-->"};
+        final String[] secondLine = new String[] {"[scarlet]Ban", "[red]Exit", "[orange]Kick"};
+        this.options = new String[][] {firstLine, secondLine};
+    }
+
+    private void menuHandler(Player player, int option) {
+        Call.sendMessage("Option picked: " + option);
+    }
+
+    private void commandAction(String[] args, Player player) {
+        Call.menu(menuId, "Test", "Hi", options);
+    }
+
+    @Override
+    public void registerClientCommands(CommandHandler handler) {
+        handler.register("playerinfo", "Shows the info of the player", this::commandAction);
+    }
 
     public static void onInfoCommand(String[] args, Player admin) {
 

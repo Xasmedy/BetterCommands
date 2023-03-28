@@ -9,6 +9,7 @@
 package xasmedy.bettercommands;
 
 import arc.struct.ObjectSet;
+import arc.util.Timer;
 import mindustry.gen.Player;
 import mindustry.net.Administration;
 import java.util.ArrayList;
@@ -19,6 +20,11 @@ public class Util {
     // Be careful to leave a space at the end.
     // TODO Move this into a configuration file.
     public final static String PREFIX = "[orange]BetterComm [gray]>> ";
+
+    public static void executeAtNextTick(Runnable runnable) {
+        // I execute the action at the next game tick.
+        Timer.schedule(runnable, 1 / 60f);
+    }
 
     // Make the reason for a kick.
     public static String reason(String kickType, String[] args, Player admin) {
