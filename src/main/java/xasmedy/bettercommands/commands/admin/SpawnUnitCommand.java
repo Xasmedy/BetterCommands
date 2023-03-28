@@ -63,7 +63,8 @@ public class SpawnUnitCommand implements Command {
         final Unit unit = type.spawn(admin.x, admin.y);
 
         // If the unit is dead, it means it could not spawn because of the cap.
-        if (type.useUnitCap && unit.count() == unit.cap() && unit.dead()) {
+        // I check the pause state since it allows to spawn units over the cap. (Mindustry Bug)
+        if (type.useUnitCap && unit.count() == unit.cap() && unit.dead() && !Vars.state.isPaused()) {
             final String message = String.format(UNIT_CAP_REACHED_MESSAGE, PREFIX, unit.cap(), type.name);
             Call.sendMessage(message);
             return;
