@@ -23,10 +23,11 @@ dependencies {
     //implementation "com.github.Xasmedy:MAPIE:2cf5c788ee"
 }
 
+/*
 jar {
     manifest {
         attributes(
                 "Class-Path": "MAPIE-v0.5.jar"//configurations.runtimeClasspath.collect { it.getName() }.join(' ')
         )
     }
-}
+}*/
