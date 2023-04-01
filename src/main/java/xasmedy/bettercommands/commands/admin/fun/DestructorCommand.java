@@ -23,12 +23,24 @@ import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import xasmedy.bettercommands.commands.Command;
 import java.util.HashSet;
+import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
 
 public class DestructorCommand implements Command {
 
-    private final HashSet<Player> turboDestructor = new HashSet<>();
+    private final HashSet<Player> activeDestructors = new HashSet<>();
 
     private int ticks = 0;
+
+    private void commandAction(String[] args, Player player) {
+
+        if (!player.admin()) {
+            player.sendMessage(NOT_ENOUGH_PERMISSION);
+            return;
+        }
+
+        if (activeDestructors.contains(player)) activeDestructors.remove(player);
+        else activeDestructors.add(player);
+    }
 
     @Override
     public void init() {
@@ -38,17 +50,17 @@ public class DestructorCommand implements Command {
                 runTick();
             }
         });
-        Events.on(EventType.GameOverEvent.class, gameOverEvent -> turboDestructor.clear());
+        Events.on(EventType.GameOverEvent.class, gameOverEvent -> activeDestructors.clear());
     }
 
     @Override
     public void registerClientCommands(CommandHandler handler) {
-        handler.register("destructor", "[red]MAX DESTRUCTION!![accent]", (String[] args, Player p) -> {
-            if (turboDestructor.contains(p)) turboDestructor.remove(p);
-            else turboDestructor.add(p);
-        });
+        handler.register("destructor", "[red]MAX DESTRUCTION!![accent]", this::commandAction);
     }
+
     public void runTick() {
+
+        if (activeDestructors.isEmpty()) return;
 
         if (ticks % 30 != 0) {
             ticks++;
@@ -57,7 +69,7 @@ public class DestructorCommand implements Command {
 
         ticks = 0;
 
-        for (Player player : turboDestructor) {
+        for (Player player : activeDestructors) {
             turboDestructor(player.x, player.y, player);
         }
     }
