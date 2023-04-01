@@ -15,6 +15,7 @@ import arc.graphics.Color;
 import arc.math.Mathf;
 import arc.math.geom.Circle;
 import arc.util.CommandHandler;
+import mindustry.Vars;
 import mindustry.content.Fx;
 import mindustry.game.EventType;
 import mindustry.game.Team;
@@ -75,7 +76,9 @@ public class DestructorCommand implements Command {
             unit.damagePierce(unit.maxHealth() / 10);
         });
 
-        Groups.build.forEach(build -> {
+        Vars.world.tiles.forEach(tile -> {
+            final Building build = tile.build;
+            if (build == null) return;
             if (build.team.equals(playerTeam)) return;
             if (!circle.contains(build.x(), build.y())) return;
             build.damage(getBuildDamage(build));
