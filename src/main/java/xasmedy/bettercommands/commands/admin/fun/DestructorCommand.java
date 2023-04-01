@@ -21,6 +21,7 @@ import mindustry.gen.Building;
 import mindustry.gen.Call;
 import mindustry.gen.Groups;
 import mindustry.gen.Player;
+import mindustry.world.blocks.storage.CoreBlock;
 import xasmedy.bettercommands.commands.Command;
 import java.util.HashSet;
 import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
@@ -43,36 +44,26 @@ public class DestructorCommand implements Command {
         else activeDestructors.add(player);
     }
 
-    @Override
-    public void init() {
-        Core.app.addListener(new ApplicationListener() {
-            @Override
-            public void update() {
-                runTick();
-            }
-        });
-        Events.on(EventType.GameOverEvent.class, gameOverEvent -> activeDestructors.clear());
+    private Color setColorForAngle(float t) {
+
+        // a by default is 1.
+        if (t < 0.16f) colorBuffer.set(1, t / 0.16f, 0);
+        else if (t < 0.33f) colorBuffer.set(1 - ((t - 0.16f) / 0.17f), 1, 0);
+        else if (t < 0.5f) colorBuffer.set(0, 1, (t - 0.33f) / 0.17f);
+        else if (t < 0.66f) colorBuffer.set(0, 1 - ((t - 0.5f) / 0.17f), 1);
+        else if (t < 0.83f) colorBuffer.set((t - 0.66f) / 0.17f, 0, 1);
+        else colorBuffer.set(1, 0, 1 - ((t - 0.83f) / 0.17f));
+        return colorBuffer;
     }
 
-    @Override
-    public void registerClientCommands(CommandHandler handler) {
-        handler.register("destructor", "[red]MAX DESTRUCTION!![accent]", this::commandAction);
-    }
+    private float getBuildDamage(Building building) {
 
-    public void runTick() {
+        // I avoid cores getting killed too fast.
+        if (building instanceof CoreBlock.CoreBuild) return building.health() / 100f;
 
-        if (activeDestructors.isEmpty()) return;
-
-        if (ticks % 30 != 0) {
-            ticks++;
-            return;
-        }
-
-        ticks = 0;
-
-        for (Player player : activeDestructors) {
-            turboDestructor(player.x, player.y, player);
-        }
+        // Tells in how many hits it kills the building.
+        final float divider = building.maxHealth() / 300f;
+        return building.maxHealth() / divider;
     }
 
     public void turboDestructor(float centerX, float centerY, Player player) {
@@ -97,12 +88,12 @@ public class DestructorCommand implements Command {
             float rotatedY = centerY + (y - centerY) * cos + (x - centerX) * sin;
 
             Building build = Vars.world.buildWorld(rotatedX, rotatedY);
-            if (build != null && !build.team.equals(player.team())) build.damage(build.health() / 2); // I take 50% of the build health.
+            if (build != null && !build.team.equals(player.team())) build.damage(getBuildDamage(build));
 
             Groups.unit.forEach(unit -> {
                 if (unit.team.equals(player.team())) return;
                 if (!unit.within(centerX, centerY, radius)) return;
-                unit.damagePierce(unit.maxHealth / 10);
+                unit.damagePierce(unit.maxHealth() / 10);
             });
 
             // Keep this unreliable, to avoid TCP header and users with bad internet won't suffer as much. (hopefully)
@@ -110,15 +101,35 @@ public class DestructorCommand implements Command {
         }
     }
 
-    private Color setColorForAngle(float t) {
+    private void runTick() {
 
-        // a by default is 1.
-        if (t < 0.16f) colorBuffer.set(1, t / 0.16f, 0);
-        else if (t < 0.33f) colorBuffer.set(1 - ((t - 0.16f) / 0.17f), 1, 0);
-        else if (t < 0.5f) colorBuffer.set(0, 1, (t - 0.33f) / 0.17f);
-        else if (t < 0.66f) colorBuffer.set(0, 1 - ((t - 0.5f) / 0.17f), 1);
-        else if (t < 0.83f) colorBuffer.set((t - 0.66f) / 0.17f, 0, 1);
-        else colorBuffer.set(1, 0, 1 - ((t - 0.83f) / 0.17f));
-        return colorBuffer;
+        if (activeDestructors.isEmpty()) return;
+
+        if (ticks % 60 != 0) {
+            ticks++;
+            return;
+        }
+
+        ticks = 0;
+
+        for (Player player : activeDestructors) {
+            turboDestructor(player.x, player.y, player);
+        }
+    }
+
+    @Override
+    public void init() {
+        Core.app.addListener(new ApplicationListener() {
+            @Override
+            public void update() {
+                runTick();
+            }
+        });
+        Events.on(EventType.GameOverEvent.class, gameOverEvent -> activeDestructors.clear());
+    }
+
+    @Override
+    public void registerClientCommands(CommandHandler handler) {
+        handler.register("destructor", "[red]MAX DESTRUCTION!![accent]", this::commandAction);
     }
 }

@@ -32,7 +32,7 @@ public class TeamCommand implements Command {
 
         Util.findTeam(args[0]).ifPresentOrElse(team -> {
 
-            player.unit().team(team);
+            player.team(team);
 
             final String message = String.format(TEAM_CHANGE_MESSAGE, PREFIX, team.color, team.name.toLowerCase());
             player.sendMessage(message);
