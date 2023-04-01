@@ -82,9 +82,9 @@ public class DestructorCommand implements Command {
         });
     }
 
-    public void turboDestructor(float centerX, float centerY, Player player) {
+    public void turboDestructor(Player player) {
 
-        circle.set(centerX, centerY, Math.max(player.unit().hitSize() * 3f, 100f)); // adjust as needed
+        circle.set(player.x(), player.y(), Math.max(player.unit().hitSize() * 3f, 100f)); // adjust as needed
 
         float pointCount = 60f; // adjust as needed
         float angleIncrement = 360f / pointCount;
@@ -93,13 +93,13 @@ public class DestructorCommand implements Command {
         for (float angle = 0; angle < 360f; angle += angleIncrement) {
 
             float rotatedAngle = angle + rotationAngle;
-            float x = centerX + circle.radius * Mathf.cosDeg(rotatedAngle);
-            float y = centerY + circle.radius * Mathf.sinDeg(rotatedAngle);
+            float x = player.x() + circle.radius * Mathf.cosDeg(rotatedAngle);
+            float y = player.y() + circle.radius * Mathf.sinDeg(rotatedAngle);
 
             float cos = Mathf.cosDeg(rotationAngle);
             float sin = Mathf.sinDeg(rotationAngle);
-            float rotatedX = centerX + (x - centerX) * cos - (y - centerY) * sin;
-            float rotatedY = centerY + (y - centerY) * cos + (x - centerX) * sin;
+            float rotatedX = player.x() + (x - player.x()) * cos - (y - player.y()) * sin;
+            float rotatedY = player.y() + (y - player.y()) * cos + (x - player.x()) * sin;
 
             // Keep this unreliable, to avoid TCP header and users with bad internet won't suffer as much. (hopefully)
             Call.effect(Fx.shootSmokeSquareBig, rotatedX, rotatedY, rotatedAngle, setColorForAngle(rotatedAngle / 360f));
@@ -114,9 +114,7 @@ public class DestructorCommand implements Command {
         if ((ticks++ / 3f) != 1) return;
         else ticks = 0;
 
-        for (Player player : activeDestructors) {
-            turboDestructor(player.x, player.y, player);
-        }
+        activeDestructors.forEach(this::turboDestructor);
     }
 
     @Override
