@@ -28,6 +28,7 @@ import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
 public class DestructorCommand implements Command {
 
     private final HashSet<Player> activeDestructors = new HashSet<>();
+    private final Color colorBuffer = new Color();
 
     private int ticks = 0;
 
@@ -106,39 +107,19 @@ public class DestructorCommand implements Command {
                 unit.damagePierce(unit.maxHealth / 10);
             });
 
-            Call.effect(Fx.shootSmokeSquareBig, rotatedX, rotatedY, rotatedAngle, getColorAtTime(rotatedAngle / 360f));
+            Call.effect(Fx.shootSmokeSquareBig, rotatedX, rotatedY, rotatedAngle, setColorForAngle(rotatedAngle / 360f));
         }
     }
 
-    private static Color getColorAtTime(float t) {
-        float r, g, b;
+    private Color setColorForAngle(float t) {
 
-        if (t < 0.16f) {
-            r = 1f;
-            g = t / 0.16f;
-            b = 0f;
-        } else if (t < 0.33f) {
-            r = 1f - (t - 0.16f) / 0.17f;
-            g = 1f;
-            b = 0f;
-        } else if (t < 0.5f) {
-            r = 0f;
-            g = 1f;
-            b = (t - 0.33f) / 0.17f;
-        } else if (t < 0.66f) {
-            r = 0f;
-            g = 1f - (t - 0.5f) / 0.17f;
-            b = 1f;
-        } else if (t < 0.83f) {
-            r = (t - 0.66f) / 0.17f;
-            g = 0f;
-            b = 1f;
-        } else {
-            r = 1f;
-            g = 0f;
-            b = 1f - (t - 0.83f) / 0.17f;
-        }
-
-        return new Color(r, g, b, 1f);
+        // a by default is 1.
+        if (t < 0.16f) colorBuffer.set(1, t / 0.16f, 0);
+        else if (t < 0.33f) colorBuffer.set(1 - ((t - 0.16f) / 0.17f), 1, 0);
+        else if (t < 0.5f) colorBuffer.set(0, 1, (t - 0.33f) / 0.17f);
+        else if (t < 0.66f) colorBuffer.set(0, 1 - ((t - 0.5f) / 0.17f), 1);
+        else if (t < 0.83f) colorBuffer.set((t - 0.66f) / 0.17f, 0, 1);
+        else colorBuffer.set(1, 0, 1 - ((t - 0.83f) / 0.17f));
+        return colorBuffer;
     }
 }
