@@ -13,17 +13,15 @@ import arc.Core;
 import arc.Events;
 import arc.graphics.Color;
 import arc.math.Mathf;
-import arc.math.geom.QuadTree;
-import arc.math.geom.Rect;
+import arc.math.geom.Circle;
 import arc.util.CommandHandler;
-import mindustry.Vars;
 import mindustry.content.Fx;
 import mindustry.game.EventType;
+import mindustry.game.Team;
 import mindustry.gen.Building;
 import mindustry.gen.Call;
 import mindustry.gen.Groups;
 import mindustry.gen.Player;
-import mindustry.world.Tile;
 import mindustry.world.blocks.storage.CoreBlock;
 import xasmedy.bettercommands.commands.Command;
 import java.util.HashSet;
@@ -33,9 +31,8 @@ public class DestructorCommand implements Command {
 
     private final HashSet<Player> activeDestructors = new HashSet<>();
     private final Color colorBuffer = new Color();
-    QuadTree<Tile> worldQuadTree;
+    private final Circle circle = new Circle();
     private int ticks = 0;
-    private boolean isMapTick = true;
 
     private void commandAction(String[] args, Player player) {
 
@@ -70,24 +67,24 @@ public class DestructorCommand implements Command {
         return building.maxHealth() / divider;
     }
 
-    private void dealDamage(Player player, float centerX, float centerY, float radius) {
+    private void dealDamage(Team playerTeam) {
+
         Groups.unit.forEach(unit -> {
-            if (unit.team.equals(player.team())) return;
-            if (!unit.within(centerX, centerY, radius)) return;
+            if (unit.team.equals(playerTeam)) return;
+            if (!circle.contains(unit.x(), unit.y())) return;
             unit.damagePierce(unit.maxHealth() / 10);
         });
 
-        worldQuadTree.intersect(new Rect((centerX - radius), (centerY - radius), (2 * radius), (2 * radius)), tile -> {
-            if (tile != null) {
-                Building build = tile.build;
-                if (build != null && !build.team.equals(player.team())) build.damage(getBuildDamage(build));
-            }
+        Groups.build.forEach(build -> {
+            if (build.team.equals(playerTeam)) return;
+            if (!circle.contains(build.x(), build.y())) return;
+            build.damage(getBuildDamage(build));
         });
     }
 
     public void turboDestructor(float centerX, float centerY, Player player) {
 
-        float radius = Math.max(player.unit().hitSize() * 3f, 100f); // adjust as needed
+        circle.set(centerX, centerY, Math.max(player.unit().hitSize() * 3f, 100f)); // adjust as needed
 
         float pointCount = 60f; // adjust as needed
         float angleIncrement = 360f / pointCount;
@@ -96,8 +93,8 @@ public class DestructorCommand implements Command {
         for (float angle = 0; angle < 360f; angle += angleIncrement) {
 
             float rotatedAngle = angle + rotationAngle;
-            float x = centerX + radius * Mathf.cosDeg(rotatedAngle);
-            float y = centerY + radius * Mathf.sinDeg(rotatedAngle);
+            float x = centerX + circle.radius * Mathf.cosDeg(rotatedAngle);
+            float y = centerY + circle.radius * Mathf.sinDeg(rotatedAngle);
 
             float cos = Mathf.cosDeg(rotationAngle);
             float sin = Mathf.sinDeg(rotationAngle);
@@ -107,18 +104,7 @@ public class DestructorCommand implements Command {
             // Keep this unreliable, to avoid TCP header and users with bad internet won't suffer as much. (hopefully)
             Call.effect(Fx.shootSmokeSquareBig, rotatedX, rotatedY, rotatedAngle, setColorForAngle(rotatedAngle / 360f));
         }
-
-        dealDamage(player, centerX, centerY, radius);
-    }
-
-    private void syncQuadTree() {
-        worldQuadTree = new QuadTree<>(Vars.world.getQuadBounds(new Rect()));
-
-        for (int x = 0; x < Vars.world.width(); x++) {
-            for (int y = 0; y < Vars.world.height(); y++) {
-                worldQuadTree.insert(Vars.world.tile(x, y));
-            }
-        }
+        dealDamage(player.team());
     }
 
     private void runTick() {
@@ -127,11 +113,6 @@ public class DestructorCommand implements Command {
 
         if ((ticks++ / 3f) != 1) return;
         else ticks = 0;
-
-        if (isMapTick) {
-            syncQuadTree();
-        }
-        isMapTick = !isMapTick;
 
         for (Player player : activeDestructors) {
             turboDestructor(player.x, player.y, player);

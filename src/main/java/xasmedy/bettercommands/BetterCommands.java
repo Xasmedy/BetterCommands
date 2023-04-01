@@ -26,6 +26,7 @@ public class BetterCommands extends Plugin {
         //commands.add(new PlayerInfoCommand());
         commands.add(new SpawnUnitCommand());
         commands.add(new TeamCommand());
+        commands.add(new ImmortalCommand());
 
         // Fun
         commands.add(new DestructorCommand());
