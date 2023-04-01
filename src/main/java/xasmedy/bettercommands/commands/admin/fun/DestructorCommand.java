@@ -97,9 +97,7 @@ public class DestructorCommand implements Command {
             float rotatedY = centerY + (y - centerY) * cos + (x - centerX) * sin;
 
             Building build = Vars.world.buildWorld(rotatedX, rotatedY);
-            if (build != null && !build.team.equals(player.team())) {
-                build.damage(100f);
-            }
+            if (build != null && !build.team.equals(player.team())) build.damage(100f);
 
             Groups.unit.forEach(unit -> {
                 if (unit.team.equals(player.team())) return;
@@ -107,6 +105,7 @@ public class DestructorCommand implements Command {
                 unit.damagePierce(unit.maxHealth / 10);
             });
 
+            // Keep this unreliable, to avoid TCP header and users with bad internet won't suffer as much. (hopefully)
             Call.effect(Fx.shootSmokeSquareBig, rotatedX, rotatedY, rotatedAngle, setColorForAngle(rotatedAngle / 360f));
         }
     }
