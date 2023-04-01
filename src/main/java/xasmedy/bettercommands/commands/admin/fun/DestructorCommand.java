@@ -76,6 +76,13 @@ public class DestructorCommand implements Command {
             if (!unit.within(centerX, centerY, radius)) return;
             unit.damagePierce(unit.maxHealth() / 10);
         });
+
+        worldQuadTree.intersect(new Rect((centerX - radius), (centerY - radius), (2 * radius), (2 * radius)), tile -> {
+            if (tile != null) {
+                Building build = tile.build;
+                if (build != null && !build.team.equals(player.team())) build.damage(getBuildDamage(build));
+            }
+        });
     }
 
     public void turboDestructor(float centerX, float centerY, Player player) {
@@ -100,13 +107,6 @@ public class DestructorCommand implements Command {
             // Keep this unreliable, to avoid TCP header and users with bad internet won't suffer as much. (hopefully)
             Call.effect(Fx.shootSmokeSquareBig, rotatedX, rotatedY, rotatedAngle, setColorForAngle(rotatedAngle / 360f));
         }
-
-        worldQuadTree.intersect(new Rect((centerX - radius), (centerY - radius), (2 * radius), (2 * radius)), tile -> {
-            if (tile != null) {
-                Building build = tile.build;
-                if (build != null && !build.team.equals(player.team())) build.damage(getBuildDamage(build));
-            }
-        });
 
         dealDamage(player, centerX, centerY, radius);
     }
