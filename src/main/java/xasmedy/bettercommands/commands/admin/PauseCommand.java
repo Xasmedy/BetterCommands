@@ -14,6 +14,7 @@ import mindustry.gen.Call;
 import mindustry.gen.Player;
 import xasmedy.bettercommands.commands.Command;
 import static mindustry.Vars.state;
+import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
 import static xasmedy.bettercommands.Util.PREFIX;
 
 public class PauseCommand implements Command {
@@ -23,7 +24,7 @@ public class PauseCommand implements Command {
     private void commandAction(String[] lazy, Player player) {
 
         if (!player.admin) {
-            // TODO No permissions.
+            player.sendMessage(NOT_ENOUGH_PERMISSION);
             return;
         }
 

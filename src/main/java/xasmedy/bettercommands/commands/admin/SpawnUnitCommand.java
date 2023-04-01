@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 import static xasmedy.bettercommands.Util.PREFIX;
+import static xasmedy.bettercommands.Util.findTeam;
 
 public class SpawnUnitCommand implements Command {
 
@@ -79,15 +80,6 @@ public class SpawnUnitCommand implements Command {
             admin.sendMessage(message);
             return -1;
         }
-    }
-
-    private Optional<Team> findTeam(String rawTeam) {
-        // I allow all teams.
-        for (Team team : Team.all) {
-            if (!team.name.equalsIgnoreCase(rawTeam)) continue;
-            return Optional.of(team);
-        }
-        return Optional.empty();
     }
 
     /**

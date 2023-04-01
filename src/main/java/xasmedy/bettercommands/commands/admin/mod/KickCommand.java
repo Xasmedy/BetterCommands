@@ -6,19 +6,19 @@
  * Contributors of this file may put their name into the copyright notice.
  */
 
-package xasmedy.bettercommands.commands.admin;
+package xasmedy.bettercommands.commands.admin.mod;
 
-import arc.util.Log;
+import mindustry.gen.Call;
+import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import xasmedy.bettercommands.PlayerInfo;
 import xasmedy.bettercommands.Util;
 import java.util.ArrayList;
-import static mindustry.Vars.netServer;
 
 // TODO Move this inside a menu instead?
-public class UnbanCommand {
+public class KickCommand {
 
-    public static void onUnbanCommand(String[] args, Player admin) {
+    public static void onKickCommand(String[] args, Player admin) {
 
         if (admin.admin && args.length > 0) {
 
@@ -27,22 +27,32 @@ public class UnbanCommand {
             // Check if the info of the player has been found.
             if (information.size() > 0) {
 
-                // Unbanned IPs counter.
-                int i = 1;
+                boolean online = false;
 
-                // Unban every ip found.
+                // Get the IPs.
                 for (PlayerInfo playerInfo : information) {
 
                     String[] ips = playerInfo.ips.toString().replace(" ", "")
                             .replace("[", "").replace("]", "").split(",");
 
+                    // Kicked IPs counter.
+                    int i = 1;
+
+                    // Kick the IPs.
                     for (String ip : ips) {
 
-                        netServer.admins.unbanPlayerIP(ip);
-                        Log.info(ip + " is unbanned by " + admin.name + " (" + admin.ip() + ")");
-                        admin.sendMessage(Util.PREFIX + "[accent]" + ip + " [white]is [green]unbanned. [gold][" + i++ + "]");
+                        for (Player player : Groups.player) {
+
+                            if (player.ip().equals(ip)) {
+
+                                online = true;
+                                admin.sendMessage(Util.PREFIX + "[accent]" + ip + " [white]is [orange]kicked. [gold][" + i++ + "]");
+                                player.con.kick(Util.reason("kicked", args, admin));
+                                Call.sendMessage(Util.PREFIX + "[scarlet]" + player.name + " [scarlet]has been kicked by " + admin.name);
+                            }
+                        }
                     }
-                }
+                } if (!online) admin.sendMessage(Util.PREFIX + "[scarlet]The player is not online.");
             } else admin.sendMessage(Util.PREFIX + "[scarlet]Nobody could be found, check if you did any mistakes.");
         }
     }

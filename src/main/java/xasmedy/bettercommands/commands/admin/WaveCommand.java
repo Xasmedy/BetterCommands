@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.function.BiConsumer;
+import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
 import static xasmedy.bettercommands.Util.PREFIX;
 
 public class WaveCommand implements Command {
@@ -130,7 +131,7 @@ public class WaveCommand implements Command {
     private void commandAction(String[] args, Player player) {
 
         if (!player.admin) {
-            // TODO not enough permissions.
+            player.sendMessage(NOT_ENOUGH_PERMISSION);
             return;
         }
 

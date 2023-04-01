@@ -18,6 +18,7 @@ import mindustry.gen.Player;
 import xasmedy.bettercommands.commands.Command;
 import java.util.Arrays;
 import java.util.Optional;
+import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
 import static xasmedy.bettercommands.Util.PREFIX;
 
 public class GameOverCommand implements Command {
@@ -40,7 +41,7 @@ public class GameOverCommand implements Command {
     private void commandAction(String[] args, Player player) {
 
         if (!player.admin) {
-            // TODO Not enough permissions message.
+            player.sendMessage(NOT_ENOUGH_PERMISSION);
             return;
         }
 

@@ -7,9 +7,10 @@
  */
 
 package xasmedy.bettercommands;
+
+import arc.util.*;
 import xasmedy.bettercommands.commands.Command;
 import xasmedy.bettercommands.commands.admin.*;
-import arc.util.CommandHandler;
 import mindustry.mod.Plugin;
 import java.util.HashSet;
 
@@ -21,8 +22,9 @@ public class BetterCommands extends Plugin {
         commands.add(new GameOverCommand());
         commands.add(new PauseCommand());
         commands.add(new WaveCommand());
-        commands.add(new PlayerInfoCommand());
+        //commands.add(new PlayerInfoCommand());
         commands.add(new SpawnUnitCommand());
+        commands.add(new TeamCommand());
     }
 
     @Override
@@ -40,13 +42,13 @@ public class BetterCommands extends Plugin {
 
         commands.forEach(command -> command.registerClientCommands(handler));
 
-        handler.register("info", "<Name/UUID/IP>", "Get all the player information.", PlayerInfoCommand::onInfoCommand);
+        //handler.register("info", "<Name/UUID/IP>", "Get all the player information.", PlayerInfoCommand::onInfoCommand);
 
-        handler.register("ban", "<Name/UUID/IP> [Reasons...]", "Ban all the IPs a player has.", BanCommand::onBanCommand);
+        //handler.register("ban", "<Name/UUID/IP> [Reasons...]", "Ban all the IPs a player has.", BanCommand::onBanCommand);
 
-        handler.register("unban", "<Name/UUID/IP>", "Unban all the IPs a player has.", UnbanCommand::onUnbanCommand);
+        //handler.register("unban", "<Name/UUID/IP>", "Unban all the IPs a player has.", UnbanCommand::onUnbanCommand);
 
-        handler.register("kick", "<Name/UUID/IP> [Reasons...]", "Kick an IP.", KickCommand::onKickCommand);
+        //handler.register("kick", "<Name/UUID/IP> [Reasons...]", "Kick an IP.", KickCommand::onKickCommand);
 
         // TODO Add these info inside the help menu of the wave command.
         //handler.register("runwave", "<count...>", "Trigger the next waves.", RunWaveCommand::onRunWaveCommand);

@@ -6,7 +6,7 @@
  * Contributors of this file may put their name into the copyright notice.
  */
 
-package xasmedy.bettercommands.commands.admin;
+package xasmedy.bettercommands.commands.admin.mod;
 
 import arc.util.Log;
 import mindustry.gen.Call;

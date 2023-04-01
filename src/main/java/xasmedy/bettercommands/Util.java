@@ -10,20 +10,32 @@ package xasmedy.bettercommands;
 
 import arc.struct.ObjectSet;
 import arc.util.Timer;
+import mindustry.game.Team;
 import mindustry.gen.Player;
 import mindustry.net.Administration;
 import java.util.ArrayList;
+import java.util.Optional;
 import static mindustry.Vars.netServer;
 
 public class Util {
 
     // Be careful to leave a space at the end.
     // TODO Move this into a configuration file.
-    public final static String PREFIX = "[orange]BetterComm [gray]>> ";
+    public static final String PREFIX = "[orange]BetterComm [gray]>> ";
+    public static final String NOT_ENOUGH_PERMISSION = PREFIX + "[scarlet]You do not have enough permissions.";
 
     public static void executeAtNextTick(Runnable runnable) {
         // I execute the action at the next game tick.
         Timer.schedule(runnable, 1 / 60f);
+    }
+
+    public static Optional<Team> findTeam(String rawTeam) {
+        // I allow all teams.
+        for (Team team : Team.all) {
+            if (!team.name.equalsIgnoreCase(rawTeam)) continue;
+            return Optional.of(team);
+        }
+        return Optional.empty();
     }
 
     // Make the reason for a kick.
