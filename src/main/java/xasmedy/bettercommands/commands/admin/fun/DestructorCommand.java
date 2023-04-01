@@ -97,7 +97,7 @@ public class DestructorCommand implements Command {
             float rotatedY = centerY + (y - centerY) * cos + (x - centerX) * sin;
 
             Building build = Vars.world.buildWorld(rotatedX, rotatedY);
-            if (build != null && !build.team.equals(player.team())) build.damage(100f);
+            if (build != null && !build.team.equals(player.team())) build.damage(build.health() / 2); // I take 50% of the build health.
 
             Groups.unit.forEach(unit -> {
                 if (unit.team.equals(player.team())) return;
