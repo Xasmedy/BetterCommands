@@ -62,8 +62,20 @@ public class DestructorCommand implements Command {
         if (building instanceof CoreBlock.CoreBuild) return building.health() / 100f;
 
         // Tells in how many hits it kills the building.
-        final float divider = building.maxHealth() / 300f;
+        final float divider = building.maxHealth() / 100f;
         return building.maxHealth() / divider;
+    }
+
+    private void dealDamage(Player player, float centerX, float centerY, float rotatedX, float rotatedY, float radius) {
+
+        Building build = Vars.world.buildWorld(rotatedX, rotatedY);
+        if (build != null && !build.team.equals(player.team())) build.damage(getBuildDamage(build));
+
+        Groups.unit.forEach(unit -> {
+            if (unit.team.equals(player.team())) return;
+            if (!unit.within(centerX, centerY, radius)) return;
+            unit.damagePierce(unit.maxHealth() / 10);
+        });
     }
 
     public void turboDestructor(float centerX, float centerY, Player player) {
@@ -87,14 +99,7 @@ public class DestructorCommand implements Command {
             float rotatedX = centerX + (x - centerX) * cos - (y - centerY) * sin;
             float rotatedY = centerY + (y - centerY) * cos + (x - centerX) * sin;
 
-            Building build = Vars.world.buildWorld(rotatedX, rotatedY);
-            if (build != null && !build.team.equals(player.team())) build.damage(getBuildDamage(build));
-
-            Groups.unit.forEach(unit -> {
-                if (unit.team.equals(player.team())) return;
-                if (!unit.within(centerX, centerY, radius)) return;
-                unit.damagePierce(unit.maxHealth() / 10);
-            });
+            dealDamage(player, centerX, centerY, rotatedX, rotatedY, radius);
 
             // Keep this unreliable, to avoid TCP header and users with bad internet won't suffer as much. (hopefully)
             Call.effect(Fx.shootSmokeSquareBig, rotatedX, rotatedY, rotatedAngle, setColorForAngle(rotatedAngle / 360f));
@@ -105,12 +110,8 @@ public class DestructorCommand implements Command {
 
         if (activeDestructors.isEmpty()) return;
 
-        if (ticks % 60 != 0) {
-            ticks++;
-            return;
-        }
-
-        ticks = 0;
+        if ((ticks++ / 3f) != 1) return;
+        else ticks = 0;
 
         for (Player player : activeDestructors) {
             turboDestructor(player.x, player.y, player);
