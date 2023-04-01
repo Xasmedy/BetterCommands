@@ -13,6 +13,8 @@ import arc.Core;
 import arc.Events;
 import arc.graphics.Color;
 import arc.math.Mathf;
+import arc.math.geom.QuadTree;
+import arc.math.geom.Rect;
 import arc.util.CommandHandler;
 import mindustry.Vars;
 import mindustry.content.Fx;
@@ -21,6 +23,7 @@ import mindustry.gen.Building;
 import mindustry.gen.Call;
 import mindustry.gen.Groups;
 import mindustry.gen.Player;
+import mindustry.world.Tile;
 import mindustry.world.blocks.storage.CoreBlock;
 import xasmedy.bettercommands.commands.Command;
 import java.util.HashSet;
@@ -30,8 +33,9 @@ public class DestructorCommand implements Command {
 
     private final HashSet<Player> activeDestructors = new HashSet<>();
     private final Color colorBuffer = new Color();
-
+    QuadTree<Tile> worldQuadTree;
     private int ticks = 0;
+    private boolean isMapTick = true;
 
     private void commandAction(String[] args, Player player) {
 
@@ -66,11 +70,7 @@ public class DestructorCommand implements Command {
         return building.maxHealth() / divider;
     }
 
-    private void dealDamage(Player player, float centerX, float centerY, float rotatedX, float rotatedY, float radius) {
-
-        Building build = Vars.world.buildWorld(rotatedX, rotatedY);
-        if (build != null && !build.team.equals(player.team())) build.damage(getBuildDamage(build));
-
+    private void dealDamage(Player player, float centerX, float centerY, float radius) {
         Groups.unit.forEach(unit -> {
             if (unit.team.equals(player.team())) return;
             if (!unit.within(centerX, centerY, radius)) return;
@@ -86,8 +86,6 @@ public class DestructorCommand implements Command {
         float angleIncrement = 360f / pointCount;
         float rotationAngle = 0f;
 
-        int makeLightningEvery = 5;
-
         for (float angle = 0; angle < 360f; angle += angleIncrement) {
 
             float rotatedAngle = angle + rotationAngle;
@@ -99,10 +97,27 @@ public class DestructorCommand implements Command {
             float rotatedX = centerX + (x - centerX) * cos - (y - centerY) * sin;
             float rotatedY = centerY + (y - centerY) * cos + (x - centerX) * sin;
 
-            dealDamage(player, centerX, centerY, rotatedX, rotatedY, radius);
-
             // Keep this unreliable, to avoid TCP header and users with bad internet won't suffer as much. (hopefully)
             Call.effect(Fx.shootSmokeSquareBig, rotatedX, rotatedY, rotatedAngle, setColorForAngle(rotatedAngle / 360f));
+        }
+
+        worldQuadTree.intersect(new Rect((centerX - radius), (centerY - radius), (2 * radius), (2 * radius)), tile -> {
+            if (tile != null) {
+                Building build = tile.build;
+                if (build != null && !build.team.equals(player.team())) build.damage(getBuildDamage(build));
+            }
+        });
+
+        dealDamage(player, centerX, centerY, radius);
+    }
+
+    private void syncQuadTree() {
+        worldQuadTree = new QuadTree<>(Vars.world.getQuadBounds(new Rect()));
+
+        for (int x = 0; x < Vars.world.width(); x++) {
+            for (int y = 0; y < Vars.world.height(); y++) {
+                worldQuadTree.insert(Vars.world.tile(x, y));
+            }
         }
     }
 
@@ -112,6 +127,11 @@ public class DestructorCommand implements Command {
 
         if ((ticks++ / 3f) != 1) return;
         else ticks = 0;
+
+        if (isMapTick) {
+            syncQuadTree();
+        }
+        isMapTick = !isMapTick;
 
         for (Player player : activeDestructors) {
             turboDestructor(player.x, player.y, player);
