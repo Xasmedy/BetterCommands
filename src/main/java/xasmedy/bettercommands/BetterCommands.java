@@ -12,6 +12,7 @@ import arc.util.*;
 import xasmedy.bettercommands.commands.Command;
 import xasmedy.bettercommands.commands.admin.*;
 import mindustry.mod.Plugin;
+import xasmedy.bettercommands.commands.admin.fun.DestructorCommand;
 import java.util.HashSet;
 
 public class BetterCommands extends Plugin {
@@ -25,6 +26,9 @@ public class BetterCommands extends Plugin {
         //commands.add(new PlayerInfoCommand());
         commands.add(new SpawnUnitCommand());
         commands.add(new TeamCommand());
+
+        // Fun
+        commands.add(new DestructorCommand());
     }
 
     @Override

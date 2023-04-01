@@ -32,20 +32,12 @@ public class DestructorCommand implements Command {
 
     @Override
     public void init() {
-
         Core.app.addListener(new ApplicationListener() {
             @Override
             public void update() {
-
-                if (ticks % 30 != 0) {
-                    ticks++;
-                    return;
-                }
-                ticks = 0;
                 runTick();
             }
         });
-
         Events.on(EventType.GameOverEvent.class, gameOverEvent -> turboDestructor.clear());
     }
 
@@ -57,6 +49,14 @@ public class DestructorCommand implements Command {
         });
     }
     public void runTick() {
+
+        if (ticks % 30 != 0) {
+            ticks++;
+            return;
+        }
+
+        ticks = 0;
+
         for (Player player : turboDestructor) {
             turboDestructor(player.x, player.y, player);
         }
