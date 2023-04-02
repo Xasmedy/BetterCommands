@@ -16,18 +16,19 @@ mainClassName = "xasmedy.bettercommands.BetterCommands"
 
 ext {
     mindustry = 'v142'
+    mapie = 'v1.0'
 }
 
 dependencies {
     implementation "com.github.Anuken.Mindustry:core:${mindustry}"
-    //implementation "com.github.Xasmedy:MAPIE:2cf5c788ee"
+    implementation "com.github.Xasmedy:MAPIE:${mapie}"
 }
 
-/*
+
 jar {
     manifest {
         attributes(
-                "Class-Path": "MAPIE-v0.5.jar"//configurations.runtimeClasspath.collect { it.getName() }.join(' ')
+                "Class-Path": "MAPIE.jar"
         )
     }
-}*/
+}
