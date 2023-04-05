@@ -11,7 +11,7 @@ repositories {
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
-version 'v0.7'
+version = 'v0.7'
 mainClassName = "xasmedy.bettercommands.BetterCommands"
 
 ext {
@@ -28,7 +28,8 @@ dependencies {
 jar {
     manifest {
         attributes(
-                "Class-Path": "libs/MAPIE.jar"
+                "Class-Path": "libs/MAPIE.jar",
+                "version": this.version
         )
     }
 }

@@ -19,6 +19,6 @@ This plugin also requires the [MAPIE](https://github.com/Xasmedy/MAPIE) library,
 ---
 ### Minimum Requirements
 
-- [OpenJDK 17](https://adoptopenjdk.net/)
+- [OpenJDK 17](https://jdk.java.net/archive/)
 - [Mindustry v143](https://anuke.itch.io/mindustry)
 - [MAPIE v1.1](https://github.com/Xasmedy/MAPIE)
