@@ -16,7 +16,7 @@ mainClassName = "xasmedy.bettercommands.BetterCommands"
 
 ext {
     mindustry = 'v143'
-    mapie = '5a124f2b33'
+    mapie = 'v1.1'
 }
 
 dependencies {
