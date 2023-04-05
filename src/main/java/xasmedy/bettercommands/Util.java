@@ -22,7 +22,7 @@ public class Util {
 
     // Be careful to leave a space at the end.
     // TODO Move this into a configuration file.
-    public static final String PREFIX = "[orange]BetterComm [gray]>> ";
+    public static final String PREFIX = "[#A72608]Better[orange]C [gray]>> ";
     public static final String NOT_ENOUGH_PERMISSION = PREFIX + "[scarlet]You do not have enough permissions.";
 
     public static void executeAtNextTick(Runnable runnable) {

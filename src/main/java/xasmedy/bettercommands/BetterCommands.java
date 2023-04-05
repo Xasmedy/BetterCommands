@@ -51,7 +51,6 @@ public class BetterCommands extends Plugin {
         clientCommands.add(new GameOverCommand());
         clientCommands.add(new PauseCommand());
         clientCommands.add(new WaveCommand());
-        //commands.add(new PlayerInfoCommand());
         clientCommands.add(new SpawnUnitCommand());
         clientCommands.add(new TeamCommand());
         clientCommands.add(new ImmortalCommand());

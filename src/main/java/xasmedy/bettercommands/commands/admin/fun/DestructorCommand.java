@@ -53,14 +53,14 @@ public class DestructorCommand extends AbstractCommand {
     private float getBuildDamage(Building building) {
 
         // I avoid cores getting killed too fast.
-        if (building instanceof CoreBlock.CoreBuild) return building.health() / 100f;
-
-        // Tells in how many hits it kills the building.
-        final float divider = building.maxHealth() / 100f;
-        return building.maxHealth() / divider;
+        if (building instanceof CoreBlock.CoreBuild) return building.maxHealth() / 1000f;
+        // I one-shot every build.
+        return building.maxHealth();
     }
 
     private void dealDamage(Team playerTeam) {
+
+        circle.set(circle.x, circle.y, circle.radius + (3 * 8));
 
         Groups.unit.forEach(unit -> {
             if (unit.team.equals(playerTeam)) return;
@@ -81,23 +81,19 @@ public class DestructorCommand extends AbstractCommand {
 
         circle.set(player.x(), player.y(), Math.max(player.unit().hitSize() * 3f, 100f)); // adjust as needed
 
-        float pointCount = 60f; // adjust as needed
+        float pointCount = 50f; // adjust as needed
         float angleIncrement = 360f / pointCount;
-        float rotationAngle = 0f;
 
         for (float angle = 0; angle < 360f; angle += angleIncrement) {
 
-            float rotatedAngle = angle + rotationAngle;
-            float x = player.x() + circle.radius * Mathf.cosDeg(rotatedAngle);
-            float y = player.y() + circle.radius * Mathf.sinDeg(rotatedAngle);
+            float x = player.x() + circle.radius * Mathf.cosDeg(angle);
+            float y = player.y() + circle.radius * Mathf.sinDeg(angle);
 
-            float cos = Mathf.cosDeg(rotationAngle);
-            float sin = Mathf.sinDeg(rotationAngle);
-            float rotatedX = player.x() + (x - player.x()) * cos - (y - player.y()) * sin;
-            float rotatedY = player.y() + (y - player.y()) * cos + (x - player.x()) * sin;
+            float rotatedX = player.x() + (x - player.x());
+            float rotatedY = player.y() + (y - player.y());
 
             // Keep this unreliable, to avoid TCP header and users with bad internet won't suffer as much. (hopefully)
-            Call.effect(Fx.shootSmokeSquareBig, rotatedX, rotatedY, rotatedAngle, setColorForAngle(rotatedAngle / 360f));
+            Call.effect(Fx.shootSmokeSquareBig, rotatedX, rotatedY, angle, setColorForAngle(angle / 360f));
         }
         dealDamage(player.team());
     }
@@ -149,5 +145,6 @@ public class DestructorCommand extends AbstractCommand {
         if (!activeDestructors.isEmpty()) return;
         Events.remove(EventType.PlayerLeave.class, playerLeaveListener);
         Core.app.removeListener(listener);
+        isInit.set(false); // I tell the command manager to run init().
     }
 }
