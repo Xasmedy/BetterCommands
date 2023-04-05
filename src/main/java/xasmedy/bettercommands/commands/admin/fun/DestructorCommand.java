@@ -53,7 +53,7 @@ public class DestructorCommand extends AbstractCommand {
     private float getBuildDamage(Building building) {
 
         // I avoid cores getting killed too fast.
-        if (building instanceof CoreBlock.CoreBuild) return building.maxHealth() / 1000f;
+        if (building instanceof CoreBlock.CoreBuild) return building.maxHealth() / 4000f;
         // I one-shot every build.
         return building.maxHealth();
     }
