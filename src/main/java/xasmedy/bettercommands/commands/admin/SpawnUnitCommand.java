@@ -43,7 +43,6 @@ public class SpawnUnitCommand extends AbstractCommand {
     private static final String UNIT_NOT_ALL_SPAWNED_MESSAGE = "%s[orange]The unit [#%s]%s[] has been spawned [sky]%d[accent]/[sky]%d[orange] times. [gray]([sky]%s[accent]/[sky]%d[gray])";
     private static final String UNIT_CAP_REACHED_MESSAGE = "%s[red]The cap of [sky]%d[] has been reached for the unit [sky]%s[red].";
     private UnitType[] availableUnits = null;
-    private final int menuId = BetterCommands.get().menu().register();
 
     private static float getShieldFromInput(String rawShield, Player admin) {
 
@@ -237,8 +236,9 @@ public class SpawnUnitCommand extends AbstractCommand {
         public HelpMenu(Player player) {
 
             final ButtonsLayout<Button> layout = new ButtonsLayout<>();
-            final SupplierTemplate template = new SupplierTemplate(menuId, layout,
-                    () -> "Units List [" + (currentPage + 1) + "/" + getMaxPages() + "]", this::getMenuMessage);
+            final SupplierTemplate template = new SupplierTemplate(layout,
+                    () -> "Units List [" + (currentPage + 1) + "/" + getMaxPages() + "]",
+                    this::getMenuMessage);
 
             this.panel = new FollowUpPanel<>(BetterCommands.get().menu(), player, template);
 
