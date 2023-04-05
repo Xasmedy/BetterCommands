@@ -3,33 +3,22 @@
 
 ### The plugin will receive more updates.
 
-**A new version of the plugin is being worked on inside the `v7` branch.**<br>
+**The plugin is now available for v143! There will be more updates but slow ones. (better than none) 
 The scope of this plugin is make available some console commands for admins. But there will be new commands available for moderation and even players!
 The plugin was planed to be made only for the *mindustry.ddns.net* server but I decided to make it public and get credits.
 
 ### Available commands:
 
-- Info
-- Ban
-- Unban
-- Kick
-- Pause
-- Runwave
-- Repeatwave
-- Jumpwave
-- Gameover
+/destructor /gameOver /immortal /pause /spawn /team /wave
 
-## How to use
+## How to install
 
-Where you have the jar file, search a folder called `config`, inside it you will find another folder called `mods`, put the BetterCommands jar in there, and start the server. Once the server starts, all commands will be loaded and ready for be used, you can see the commands list by doing */help* in chat.
+Get the release .jar from the GitHub page and install it inside the `mods` directory.<br>
+This plugin also requires the [MAPIE](https://github.com/Xasmedy/MAPIE) library, its .jar needs to be installed inside `mods/libs/`.
 
 ---
-
-If you want to change the prefix, you need to go inside the Util class and modify the `public static final namePrefix`. Once you do it, build the project and get the jar from the builded folder. For buildind the project you need to do `gradle jar` inside the IDE or your terminal.
-
-For Mindustry help you can look [here](https://github.com/Anuken/Mindustry/blob/master/README.md).
-
 ### Minimum Requirements
 
-- [JDK 15](https://adoptopenjdk.net/)
-- [Mindustry 123v](https://anuke.itch.io/mindustry)
+- [OpenJDK 17](https://adoptopenjdk.net/)
+- [Mindustry v143](https://anuke.itch.io/mindustry)
+- [MAPIE v1.1](https://github.com/Xasmedy/MAPIE)
