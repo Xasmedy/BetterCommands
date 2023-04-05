@@ -5,26 +5,30 @@ plugins {
     id "com.github.johnrengelman.shadow" version "6.1.0"
 }
 
-version '0.6v'
-
 repositories {
     mavenCentral()
     maven { url 'https://www.jitpack.io' }
 }
 
-application {
-    mainClassName = 'xasmedy.BetterCommands'
-}
+sourceCompatibility = JavaVersion.VERSION_17
+version 'v0.7'
+mainClassName = "xasmedy.bettercommands.BetterCommands"
 
 ext {
-    versions = [
-            javacord  : '3.1.2',
-            mindustry : 'v123'
-    ]
+    mindustry = 'v143'
+    mapie = '5a124f2b33'
 }
 
-// The use of javaCord is for a future discord implementation.
 dependencies {
-    implementation "org.javacord:javacord:${versions.javacord}"
-    implementation "com.github.Anuken.Mindustry:core:${versions.mindustry}"
+    implementation "com.github.Anuken.Mindustry:core:${mindustry}"
+    implementation "com.github.Xasmedy:MAPIE:${mapie}"
+}
+
+
+jar {
+    manifest {
+        attributes(
+                "Class-Path": "libs/MAPIE.jar"
+        )
+    }
 }
