@@ -49,7 +49,7 @@ public class GameOverCommand extends AbstractCommand {
 
     @Override
     public String description() {
-        return "Forces a game-over.";
+        return "Forces a game-over, in pvp the winning team can be selected.";
     }
 
     @Override

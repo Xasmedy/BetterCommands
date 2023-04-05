@@ -24,7 +24,7 @@ public class ImmortalCommand extends AbstractCommand {
 
     @Override
     public String description() {
-        return "Gives you infinite shield.";
+        return "Gives you max shield.";
     }
 
     @Override

@@ -14,8 +14,14 @@ import mindustry.Vars;
 import mindustry.game.EventType;
 import mindustry.gen.Call;
 import mindustry.gen.Player;
+import xasmedy.bettercommands.BetterCommands;
 import xasmedy.mapie.command.AbstractCommand;
+import xasmedy.mapie.menu.buttons.UnmodifiableButton;
+import xasmedy.mapie.menu.panels.FollowUpPanel;
+import xasmedy.mapie.menu.parsers.ButtonsLayout;
+import xasmedy.mapie.menu.templates.UnmodifiableTemplate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.function.BiConsumer;
@@ -25,6 +31,7 @@ import static xasmedy.bettercommands.Util.PREFIX;
 public class WaveCommand extends AbstractCommand {
 
     private static final int MAX_WAVES = 20;
+    private static final String INVALID_OPTION = "%s[scarlet]The option [red]%s[] is not valid.";
     private static final String INVALID_NUMBER_ERROR = "%s[scarlet]The inserted value [sky]%s[] is not a valid number.";
     private static final String MAX_WAVES_OVERFLOW_ERROR = "%s[scarlet]You can not spawn more than [orange]" + MAX_WAVES + "[] waves. [gray]([accent]%d[])";
     private static final String NO_VALUE_JUMP_WAVE_ERROR = "%s[scarlet]Please provide the wave to jump to.";
@@ -35,7 +42,8 @@ public class WaveCommand extends AbstractCommand {
 
     public WaveCommand() {
 
-        // TODO Help action.
+        actions.put("help", (String[] args, Player admin) -> new HelpMenu(admin));
+
         actions.put("run", (String[] args, Player admin) -> {
 
             if (args.length == 1) {
@@ -134,7 +142,7 @@ public class WaveCommand extends AbstractCommand {
 
     @Override
     public String params() {
-        return "<run/jump/skip/repeat> [args]";
+        return "<[accent]help[gray]/[red]run[gray]/[pink]jump[gray]/[sky]skip[gray]/[orange]repeat[gray]> [[[#bababa]args[]]";
     }
 
     @Override
@@ -151,7 +159,8 @@ public class WaveCommand extends AbstractCommand {
     public void clientAction(Player player, String[] args) {
         final BiConsumer<String[], Player> action = actions.get(args[0].toLowerCase());
         if (action == null) {
-            // TODO Help menu.
+            final String message = String.format(INVALID_OPTION, PREFIX, args[0]);
+            player.sendMessage(message);
             return;
         }
         action.accept(args, player);
@@ -160,5 +169,52 @@ public class WaveCommand extends AbstractCommand {
     @Override
     public void noPermissionsAction(Player player, String[] args) {
         player.sendMessage(NOT_ENOUGH_PERMISSION);
+    }
+
+    private static final class HelpMenu {
+
+        private HelpMenu(Player player) {
+
+            final ButtonsLayout<UnmodifiableButton> layout = new ButtonsLayout<>();
+
+            final UnmodifiableTemplate mainTemplate = new UnmodifiableTemplate("[#A72608]Wave[gray]/[blue]Main [gray]- [accent]Help Menu", """
+                    [blue]Main Wave help page.
+                    
+                    [accent]There are [green]4[] different types of [#A72608]wave control [gray]([red]run[gray], [pink]jump[gray], [sky]skip[gray], [orange]repeat[gray])
+                    [accent]Each one of them has its own perks and can be specified in the first argument.
+                    [gray]/wave <[green]type[]>
+                    
+                    [#bababa]Click the buttons bellow for specific info.
+                    """, layout);
+            final UnmodifiableTemplate runTemplate = new UnmodifiableTemplate("[#A72608]Wave[gray]/[red]Run [gray]- [accent]Help Menu", """
+                    [sky]Runs the wanted number of waves with a maximum of 20.
+                    [orange]If no wave is specified, the current wave will be ran.
+                    """, layout);
+            final UnmodifiableTemplate jumpTemplate = new UnmodifiableTemplate("[#A72608]Wave[gray]/[pink]Jump [gray]- [accent]Help Menu", """
+                    [sky]Jumps to the wanted wave without starting it.
+                    [red]A value is always needed.
+                    """, layout);
+            final UnmodifiableTemplate skipTemplate = new UnmodifiableTemplate("[#A72608]Wave[gray]/[sky]Skip [gray]- [accent]Help Menu", """
+                    [sky]Skips [accent]from[] the current wave by a specified amount.
+                    [orange]If no value is specified, it will skip to the next wave.
+                    """, layout);
+            final UnmodifiableTemplate repeatTemplate = new UnmodifiableTemplate("[#A72608]Wave[gray]/[orange]Repeat [gray]- [accent]Help Menu", """
+                    [sky]Repeats the current wave a wanted number of times with a maximum of 20.
+                    [orange]If no value is specified, it will run the current wave one time.
+                    """, layout);
+
+            final FollowUpPanel<UnmodifiableTemplate> panel = new FollowUpPanel<>(BetterCommands.get().menu(), player, mainTemplate);
+            layout.addColumn(0, List.of(
+                    new UnmodifiableButton("[red]Run", () -> panel.display(runTemplate)),
+                    new UnmodifiableButton("[blue]Main", () -> panel.display(mainTemplate)),
+                    new UnmodifiableButton("[pink]Jump", () -> panel.display(jumpTemplate))));
+
+            layout.addColumn(1, List.of(
+                    new UnmodifiableButton("[sky]Skip", () -> panel.display(skipTemplate)),
+                    new UnmodifiableButton("[red]" + '\ue85f', panel::close),
+                    new UnmodifiableButton("[orange]Repeat", () -> panel.display(repeatTemplate))));
+
+            panel.update();
+        }
     }
 }

@@ -32,7 +32,7 @@ public class TeamCommand extends AbstractCommand {
 
     @Override
     public String description() {
-        return "Changes the player team.";
+        return "Changes the player team to the wanted one.";
     }
 
     @Override
