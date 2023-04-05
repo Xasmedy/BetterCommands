@@ -8,22 +8,26 @@
 
 package xasmedy.bettercommands.commands.admin;
 
-import arc.Events;
 import arc.util.Strings;
 import mindustry.Vars;
 import mindustry.content.UnitTypes;
 import mindustry.entities.Units;
-import mindustry.game.EventType;
 import mindustry.game.Team;
 import mindustry.gen.Call;
 import mindustry.gen.Player;
 import mindustry.gen.Unit;
 import mindustry.type.UnitType;
-import mindustry.ui.Menus;
+import xasmedy.bettercommands.BetterCommands;
 import xasmedy.bettercommands.Util;
 import xasmedy.mapie.command.AbstractCommand;
+import xasmedy.mapie.menu.*;
+import xasmedy.mapie.menu.buttons.SupplierButton;
+import xasmedy.mapie.menu.buttons.UnmodifiableButton;
+import xasmedy.mapie.menu.panels.FollowUpPanel;
+import xasmedy.mapie.menu.parsers.ButtonsLayout;
+import xasmedy.mapie.menu.templates.SupplierTemplate;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 import static xasmedy.bettercommands.Util.*;
@@ -38,9 +42,8 @@ public class SpawnUnitCommand extends AbstractCommand {
     private static final String UNIT_SPAWNED_MESSAGE = "%s[orange]The unit [#%s]%s[] has been spawned [sky]%d[] time%s. [gray]([sky]%s[accent]/[sky]%d[gray])";
     private static final String UNIT_NOT_ALL_SPAWNED_MESSAGE = "%s[orange]The unit [#%s]%s[] has been spawned [sky]%d[accent]/[sky]%d[orange] times. [gray]([sky]%s[accent]/[sky]%d[gray])";
     private static final String UNIT_CAP_REACHED_MESSAGE = "%s[red]The cap of [sky]%d[] has been reached for the unit [sky]%s[red].";
-    private final HashMap<Player, ListMenu> activeMenus = new HashMap<>();
     private UnitType[] availableUnits = null;
-    private int menuId;
+    private final int menuId = BetterCommands.get().menu().register();
 
     private static float getShieldFromInput(String rawShield, Player admin) {
 
@@ -156,11 +159,6 @@ public class SpawnUnitCommand extends AbstractCommand {
                 // I sort by alphabetical order. (Kind of)
                 .sorted((u1, u2) -> u1.name.compareToIgnoreCase(u2.name))
                 .toArray(UnitType[]::new);
-
-        // The player is always found inside the map since added the moment the command is issued.
-        this.menuId = Menus.registerMenu((player, option) -> activeMenus.get(player).updateMenu(option));
-        // I do this to avoid memory leaks.
-        Events.on(EventType.PlayerJoin.class, e -> activeMenus.remove(e.player));
     }
 
     @Override
@@ -195,7 +193,8 @@ public class SpawnUnitCommand extends AbstractCommand {
 
         // I don't think there will ever be a unit called "list".
         if (args[0].equalsIgnoreCase("list")) {
-            activeMenus.put(player, new ListMenu(player));
+            new HelpMenu(player);
+            //activeMenus.put(player, new ListMenu(player));
             return;
         }
 
@@ -227,17 +226,34 @@ public class SpawnUnitCommand extends AbstractCommand {
     }
 
     /**
-     * A non-hardcoded menu that won't break in case of future mindustry updates or when the {@link ListMenu#UNITS_PER_PAGE} value is changed.
+     * A non-hardcoded menu that won't break in case of future mindustry updates or when the {@link HelpMenu#UNITS_PER_PAGE} value is changed.
      */
-    private final class ListMenu {
+    private final class HelpMenu {
 
         private static final int UNITS_PER_PAGE = 15;
-        public final Player player;
+        private final FollowUpPanel<SupplierTemplate> panel;
         private int currentPage = 0;
 
-        public ListMenu(Player player) {
-            this.player = player;
-            displayMenu();
+        public HelpMenu(Player player) {
+
+            final ButtonsLayout<Button> layout = new ButtonsLayout<>();
+            final SupplierTemplate template = new SupplierTemplate(menuId, layout,
+                    () -> "Units List [" + (currentPage + 1) + "/" + getMaxPages() + "]", this::getMenuMessage);
+
+            this.panel = new FollowUpPanel<>(BetterCommands.get().menu(), player, template);
+
+            final SupplierButton prev = new SupplierButton(() -> (isAtFirstPage() ? "[#bababa]" : "[sky]") + '\ue802').listener(() -> {
+                if (!isAtFirstPage()) currentPage--;
+                panel.update();
+            });
+
+            final SupplierButton next = new SupplierButton(() -> (isAtLastPage() ? "[#bababa]" : "[sky]") + '\ue803').listener(() -> {
+                if (!isAtLastPage()) currentPage++;
+                panel.update();
+            });
+
+            layout.addFirstColumn(List.of(prev, new UnmodifiableButton("[red]" + '\ue85f', panel::close), next));
+            panel.update();
         }
 
         private int getMaxPages() {
@@ -251,22 +267,6 @@ public class SpawnUnitCommand extends AbstractCommand {
 
         private boolean isAtFirstPage() {
             return currentPage == 0;
-        }
-
-        private String getTitle() {
-            return "Units List [" + (currentPage + 1) + "/" + getMaxPages() + "]";
-        }
-
-        private String[][] getOptions() {
-            /* Unicodes
-            Left arrow : '\ue803'
-            Exit       : '\ue85f'
-            Right arrow: '\ue803'
-             */
-            final String prev = (isAtFirstPage() ? "[#bababa]" : "[sky]") + '\ue802';
-            final String exit = "[red]" + '\ue85f';
-            final String next = (isAtLastPage() ? "[#bababa]" : "[sky]") + '\ue803';
-            return new String[][] {new String[] {prev, exit, next}};
         }
 
         private String getMenuMessage() {
@@ -290,31 +290,6 @@ public class SpawnUnitCommand extends AbstractCommand {
                 builder.append("[gray] - ").append(color).append(unitName).append("\n");
             }
             return builder.toString();
-        }
-
-        private void displayMenu() {
-            Call.menu(player.con(), menuId, getTitle(), getMenuMessage(), getOptions());
-        }
-
-        public void updateMenu(int option) {
-
-            switch (option) {
-
-                // This player menu is no longer active.
-                case -1, 1 -> activeMenus.remove(player);
-
-                case 0 -> {
-                    if (!isAtFirstPage()) currentPage--;
-                    displayMenu();
-                }
-
-                case 2 -> {
-                    if (!isAtLastPage()) currentPage++;
-                    displayMenu();
-                }
-
-                default -> throw new IllegalStateException("Unhandled option: " + option);
-            }
         }
     }
 }

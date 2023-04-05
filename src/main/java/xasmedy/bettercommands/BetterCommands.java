@@ -14,20 +14,28 @@ import mindustry.mod.Plugin;
 import xasmedy.bettercommands.commands.admin.fun.DestructorCommand;
 import xasmedy.mapie.command.CommandRepository;
 import xasmedy.mapie.icon.ChatIcons;
+import xasmedy.mapie.menu.Menu;
 
 public class BetterCommands extends Plugin {
 
     private static BetterCommands instance;
     public final CommandRepository clientCommands = new CommandRepository();
     public final CommandRepository serverCommands = new CommandRepository();
+    private Menu menu;
 
     public static BetterCommands get() {
         return instance;
     }
 
+    public Menu menu() {
+        return menu;
+    }
+
     @Override
     public void init() {
         ChatIcons.get().loadReliable();
+        menu = Menu.init();
+        instance = this;
     }
 
     @Override
