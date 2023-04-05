@@ -8,6 +8,7 @@
 
 package xasmedy.bettercommands;
 
+import arc.ApplicationListener;
 import arc.struct.ObjectSet;
 import arc.util.Timer;
 import mindustry.game.Team;
@@ -36,6 +37,15 @@ public class Util {
             return Optional.of(team);
         }
         return Optional.empty();
+    }
+
+    public static ApplicationListener newUpdateListener(Runnable runnable) {
+        return new ApplicationListener() {
+            @Override
+            public void update() {
+                runnable.run();
+            }
+        };
     }
 
     // Make the reason for a kick.

@@ -8,25 +8,40 @@
 
 package xasmedy.bettercommands.commands.admin;
 
-import arc.util.CommandHandler;
 import arc.util.Strings;
 import mindustry.gen.Player;
 import xasmedy.bettercommands.Util;
-import xasmedy.bettercommands.commands.Command;
+import xasmedy.mapie.command.AbstractCommand;
 import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
 import static xasmedy.bettercommands.Util.PREFIX;
 
-public class TeamCommand implements Command {
+public class TeamCommand extends AbstractCommand {
 
     private static final String TEAM_CHANGE_MESSAGE = "%s[orange]Your team has been changed to [#%s]%s[orange].";
     private static final String TEAM_NOT_FOUND_ERROR = "%s[scarlet]The team [orange]%s[] does not exist.";
 
-    private void commandAction(String[] args, Player player) {
+    @Override
+    public String name() {
+        return "team";
+    }
 
-        if (!player.admin()) {
-            player.sendMessage(NOT_ENOUGH_PERMISSION);
-            return;
-        }
+    @Override
+    public String params() {
+        return "<team>";
+    }
+
+    @Override
+    public String description() {
+        return "Changes the player team.";
+    }
+
+    @Override
+    public boolean hasRequiredRoles(Player player, String[] args) {
+        return player.admin();
+    }
+
+    @Override
+    public void clientAction(Player player, String[] args) {
 
         args[0] = Strings.stripColors(args[0]);
 
@@ -44,9 +59,7 @@ public class TeamCommand implements Command {
     }
 
     @Override
-    public void registerClientCommands(CommandHandler handler) {
-        // TODO Being able to change other players team.
-        // TODO Change other player teams with a timer.
-        handler.register("team", "<team>", "Changes the current controlled unit team.", this::commandAction);
+    public void noPermissionsAction(Player player, String[] args) {
+        player.sendMessage(NOT_ENOUGH_PERMISSION);
     }
 }

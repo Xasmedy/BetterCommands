@@ -11,10 +11,10 @@ package xasmedy.bettercommands.commands.admin.fun;
 import arc.ApplicationListener;
 import arc.Core;
 import arc.Events;
+import arc.func.Cons;
 import arc.graphics.Color;
 import arc.math.Mathf;
 import arc.math.geom.Circle;
-import arc.util.CommandHandler;
 import mindustry.Vars;
 import mindustry.content.Fx;
 import mindustry.game.EventType;
@@ -24,27 +24,19 @@ import mindustry.gen.Call;
 import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import mindustry.world.blocks.storage.CoreBlock;
-import xasmedy.bettercommands.commands.Command;
+import xasmedy.mapie.command.AbstractCommand;
 import java.util.HashSet;
 import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
+import static xasmedy.bettercommands.Util.newUpdateListener;
 
-public class DestructorCommand implements Command {
+public class DestructorCommand extends AbstractCommand {
 
     private final HashSet<Player> activeDestructors = new HashSet<>();
     private final Color colorBuffer = new Color();
     private final Circle circle = new Circle();
+    private final ApplicationListener listener = newUpdateListener(this::runTick);
+    private final Cons<EventType.PlayerLeave> playerLeaveListener = event -> activeDestructors.remove(event.player);
     private int ticks = 0;
-
-    private void commandAction(String[] args, Player player) {
-
-        if (!player.admin()) {
-            player.sendMessage(NOT_ENOUGH_PERMISSION);
-            return;
-        }
-
-        if (activeDestructors.contains(player)) activeDestructors.remove(player);
-        else activeDestructors.add(player);
-    }
 
     private Color setColorForAngle(float t) {
 
@@ -121,18 +113,41 @@ public class DestructorCommand implements Command {
     }
 
     @Override
-    public void init() {
-        Core.app.addListener(new ApplicationListener() {
-            @Override
-            public void update() {
-                runTick();
-            }
-        });
-        Events.on(EventType.GameOverEvent.class, gameOverEvent -> activeDestructors.clear());
+    public String name() {
+        return "destructor";
     }
 
     @Override
-    public void registerClientCommands(CommandHandler handler) {
-        handler.register("destructor", "[red]MAX DESTRUCTION!![accent]", this::commandAction);
+    public String description() {
+        return "[red]MAX DESTRUCTION!![accent]";
+    }
+
+    @Override
+    public boolean hasRequiredRoles(Player player, String[] args) {
+        return player.admin();
+    }
+
+    @Override
+    public void clientAction(Player player, String[] args) {
+        if (activeDestructors.contains(player)) activeDestructors.remove(player);
+        else activeDestructors.add(player);
+    }
+
+    @Override
+    public void noPermissionsAction(Player player, String[] args) {
+        player.sendMessage(NOT_ENOUGH_PERMISSION);
+    }
+
+    @Override
+    protected void init(boolean isServer) {
+        Events.on(EventType.PlayerLeave.class, playerLeaveListener);
+        Core.app.addListener(listener);
+    }
+
+    @Override
+    protected void clientDispose(Player player, String[] args) {
+        if (!activeDestructors.isEmpty()) return;
+        Events.remove(EventType.PlayerLeave.class, playerLeaveListener);
+        Core.app.removeListener(listener);
     }
 }

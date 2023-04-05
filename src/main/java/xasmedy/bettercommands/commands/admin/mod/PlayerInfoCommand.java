@@ -15,12 +15,11 @@ import mindustry.gen.Player;
 import mindustry.ui.Menus;
 import xasmedy.bettercommands.PlayerInfo;
 import xasmedy.bettercommands.Util;
-import xasmedy.bettercommands.commands.Command;
-
+import xasmedy.mapie.command.AbstractCommand;
 import java.util.ArrayList;
 
 // TODO Refactor using menus.
-public class PlayerInfoCommand implements Command {
+public class PlayerInfoCommand extends AbstractCommand {
 
     private final int menuId;
     private final String[][] options;
@@ -32,17 +31,28 @@ public class PlayerInfoCommand implements Command {
         this.options = new String[][] {firstLine, secondLine};
     }
 
+    @Override
+    public String name() {
+        return "playerinfo";
+    }
+
+    @Override
+    public String description() {
+        return "Shows the info of the player";
+    }
+
+    @Override
+    public boolean hasRequiredRoles(Player player, String[] args) {
+        return player.admin();
+    }
+
     private void menuHandler(Player player, int option) {
         Call.sendMessage("Option picked: " + option);
     }
 
-    private void commandAction(String[] args, Player player) {
-        Call.menu(menuId, "Test", "Hi", options);
-    }
-
     @Override
-    public void registerClientCommands(CommandHandler handler) {
-        handler.register("playerinfo", "Shows the info of the player", this::commandAction);
+    public void clientAction(Player player, String[] args) {
+        Call.menu(menuId, "Test", "Hi", options);
     }
 
     public static void onInfoCommand(String[] args, Player admin) {

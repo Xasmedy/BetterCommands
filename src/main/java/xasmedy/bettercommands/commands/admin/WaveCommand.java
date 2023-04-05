@@ -9,13 +9,12 @@
 package xasmedy.bettercommands.commands.admin;
 
 import arc.Events;
-import arc.util.CommandHandler;
 import arc.util.Strings;
 import mindustry.Vars;
 import mindustry.game.EventType;
 import mindustry.gen.Call;
 import mindustry.gen.Player;
-import xasmedy.bettercommands.commands.Command;
+import xasmedy.mapie.command.AbstractCommand;
 import java.util.HashMap;
 import java.util.Objects;
 import java.util.OptionalInt;
@@ -23,7 +22,7 @@ import java.util.function.BiConsumer;
 import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
 import static xasmedy.bettercommands.Util.PREFIX;
 
-public class WaveCommand implements Command {
+public class WaveCommand extends AbstractCommand {
 
     private static final int MAX_WAVES = 20;
     private static final String INVALID_NUMBER_ERROR = "%s[scarlet]The inserted value [sky]%s[] is not a valid number.";
@@ -128,13 +127,28 @@ public class WaveCommand implements Command {
         Call.sendMessage(message);
     }
 
-    private void commandAction(String[] args, Player player) {
+    @Override
+    public String name() {
+        return "wave";
+    }
 
-        if (!player.admin) {
-            player.sendMessage(NOT_ENOUGH_PERMISSION);
-            return;
-        }
+    @Override
+    public String params() {
+        return "<run/jump/skip/repeat> [args]";
+    }
 
+    @Override
+    public String description() {
+        return "Manages waves.";
+    }
+
+    @Override
+    public boolean hasRequiredRoles(Player player, String[] args) {
+        return player.admin();
+    }
+
+    @Override
+    public void clientAction(Player player, String[] args) {
         final BiConsumer<String[], Player> action = actions.get(args[0].toLowerCase());
         if (action == null) {
             // TODO Help menu.
@@ -144,7 +158,7 @@ public class WaveCommand implements Command {
     }
 
     @Override
-    public void registerClientCommands(CommandHandler handler) {
-        handler.register("wave", "<run/jump/skip/repeat> [args]", "Manages waves.", this::commandAction);
+    public void noPermissionsAction(Player player, String[] args) {
+        player.sendMessage(NOT_ENOUGH_PERMISSION);
     }
 }

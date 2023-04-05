@@ -15,8 +15,8 @@ version 'v0.7'
 mainClassName = "xasmedy.bettercommands.BetterCommands"
 
 ext {
-    mindustry = 'v142'
-    mapie = 'v1.0'
+    mindustry = 'v143'
+    mapie = 'f36a9acfed'
 }
 
 dependencies {
@@ -28,7 +28,7 @@ dependencies {
 jar {
     manifest {
         attributes(
-                "Class-Path": "MAPIE.jar"
+                "Class-Path": "libs/MAPIE.jar"
         )
     }
 }

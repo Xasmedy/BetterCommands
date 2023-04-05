@@ -9,43 +9,49 @@
 package xasmedy.bettercommands;
 
 import arc.util.*;
-import xasmedy.bettercommands.commands.Command;
 import xasmedy.bettercommands.commands.admin.*;
 import mindustry.mod.Plugin;
 import xasmedy.bettercommands.commands.admin.fun.DestructorCommand;
-import java.util.HashSet;
+import xasmedy.mapie.command.CommandRepository;
+import xasmedy.mapie.icon.ChatIcons;
 
 public class BetterCommands extends Plugin {
 
-    private final HashSet<Command> commands = new HashSet<>();
+    private static BetterCommands instance;
+    public final CommandRepository clientCommands = new CommandRepository();
+    public final CommandRepository serverCommands = new CommandRepository();
 
-    public BetterCommands() {
-        commands.add(new GameOverCommand());
-        commands.add(new PauseCommand());
-        commands.add(new WaveCommand());
-        //commands.add(new PlayerInfoCommand());
-        commands.add(new SpawnUnitCommand());
-        commands.add(new TeamCommand());
-        commands.add(new ImmortalCommand());
-
-        // Fun
-        commands.add(new DestructorCommand());
+    public static BetterCommands get() {
+        return instance;
     }
 
     @Override
     public void init() {
-        commands.forEach(Command::init);
+        ChatIcons.get().loadReliable();
     }
 
     @Override
     public void registerServerCommands(CommandHandler handler) {
-        commands.forEach(command -> command.registerServerCommands(handler));
+        serverCommands.handler(handler);
+        // No server commands.
     }
 
     @Override
     public void registerClientCommands(CommandHandler handler) {
+        clientCommands.handler(handler);
 
-        commands.forEach(command -> command.registerClientCommands(handler));
+        clientCommands.add(new GameOverCommand());
+        clientCommands.add(new PauseCommand());
+        clientCommands.add(new WaveCommand());
+        //commands.add(new PlayerInfoCommand());
+        clientCommands.add(new SpawnUnitCommand());
+        clientCommands.add(new TeamCommand());
+        clientCommands.add(new ImmortalCommand());
+
+        // Fun
+        clientCommands.add(new DestructorCommand());
+
+
 
         //handler.register("info", "<Name/UUID/IP>", "Get all the player information.", PlayerInfoCommand::onInfoCommand);
 

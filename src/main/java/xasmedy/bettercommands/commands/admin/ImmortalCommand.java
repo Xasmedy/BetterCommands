@@ -8,23 +8,32 @@
 
 package xasmedy.bettercommands.commands.admin;
 
-import arc.util.CommandHandler;
 import mindustry.gen.Player;
-import xasmedy.bettercommands.commands.Command;
+import xasmedy.mapie.command.AbstractCommand;
 import java.util.HashMap;
 import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
 
-public class ImmortalCommand implements Command {
+public class ImmortalCommand extends AbstractCommand {
 
     private final HashMap<Player, Float> immortalPlayers = new HashMap<>();
 
-    private void commandAction(String[] args, Player player) {
+    @Override
+    public String name() {
+        return "immortal";
+    }
 
-        if (!player.admin()) {
-            player.sendMessage(NOT_ENOUGH_PERMISSION);
-            return;
-        }
+    @Override
+    public String description() {
+        return "Gives you infinite shield.";
+    }
 
+    @Override
+    public boolean hasRequiredRoles(Player player, String[] args) {
+        return player.admin();
+    }
+
+    @Override
+    public void clientAction(Player player, String[] args) {
         final Float originalShield = immortalPlayers.remove(player);
         if (originalShield == null) { // The player isn't immortal.
             immortalPlayers.put(player, player.unit().shield());
@@ -33,7 +42,7 @@ public class ImmortalCommand implements Command {
     }
 
     @Override
-    public void registerClientCommands(CommandHandler handler) {
-        handler.register("immortal", "Gives you infinite shield.", this::commandAction);
+    public void noPermissionsAction(Player player, String[] args) {
+        player.sendMessage(NOT_ENOUGH_PERMISSION);
     }
 }

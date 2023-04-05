@@ -9,7 +9,6 @@
 package xasmedy.bettercommands.commands.admin;
 
 import arc.Events;
-import arc.util.CommandHandler;
 import arc.util.Strings;
 import mindustry.Vars;
 import mindustry.content.UnitTypes;
@@ -22,15 +21,14 @@ import mindustry.gen.Unit;
 import mindustry.type.UnitType;
 import mindustry.ui.Menus;
 import xasmedy.bettercommands.Util;
-import xasmedy.bettercommands.commands.Command;
+import xasmedy.mapie.command.AbstractCommand;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
-import static xasmedy.bettercommands.Util.PREFIX;
-import static xasmedy.bettercommands.Util.findTeam;
+import static xasmedy.bettercommands.Util.*;
 
-public class SpawnUnitCommand implements Command {
+public class SpawnUnitCommand extends AbstractCommand {
 
     private static final String UNIT_NOT_FOUND_ERROR = "%s[scarlet]Could not find the unit [orange]%s[].";
     private static final String INVALID_SPAWN_ERROR = "%s[scarlet]The unit [orange]%s[] cannot be spawned at this location.";
@@ -44,29 +42,7 @@ public class SpawnUnitCommand implements Command {
     private UnitType[] availableUnits = null;
     private int menuId;
 
-    @Override
-    public void init() {
-
-        // I throw an exception because there's no reason to call this twice.
-        if (availableUnits != null) throw new IllegalStateException("Already instanced.");
-        this.availableUnits = StreamSupport.stream(Vars.content.units().spliterator(), false)
-                // Crashes the game.
-                .filter(unitType -> !UnitTypes.block.equals(unitType))
-                // Crashes the game + not present inside UnitTypes.
-                .filter(unitType -> !unitType.name.equalsIgnoreCase("turret-unit-build-tower"))
-                // This one will spawn nothing.
-                .filter(unitType -> !UnitTypes.assemblyDrone.equals(unitType))
-                // I sort by alphabetical order. (Kind of)
-                .sorted((u1, u2) -> u1.name.compareToIgnoreCase(u2.name))
-                .toArray(UnitType[]::new);
-
-        // The player is always found inside the map since added the moment the command is issued.
-        this.menuId = Menus.registerMenu((player, option) -> activeMenus.get(player).updateMenu(option));
-        // I do this to avoid memory leaks.
-        Events.on(EventType.PlayerJoin.class, e -> activeMenus.remove(e.player));
-    }
-
-    private float getShieldFromInput(String rawShield, Player admin) {
+    private static float getShieldFromInput(String rawShield, Player admin) {
 
         // Special exception.
         if (rawShield.equalsIgnoreCase("max")) return Float.MAX_VALUE;
@@ -85,7 +61,7 @@ public class SpawnUnitCommand implements Command {
     /**
      * -1 if not a valid amount.
      */
-    private int getAmountFromInput(String rawAmount, Player admin) {
+    private static int getAmountFromInput(String rawAmount, Player admin) {
         try {
             final int number = Integer.parseInt(rawAmount);
             if (number < 1) throw new NumberFormatException("Negative number.");
@@ -97,7 +73,7 @@ public class SpawnUnitCommand implements Command {
         }
     }
 
-    private void sendSpawnMessage(ArrayList<Unit> spawned, Player admin, UnitType type, Team team, int amount, int unitCap) {
+    private static void sendSpawnMessage(ArrayList<Unit> spawned, Player admin, UnitType type, Team team, int amount, int unitCap) {
 
         final long amountSpawned = spawned.stream()
                 .filter(unit -> !unit.dead())
@@ -122,7 +98,7 @@ public class SpawnUnitCommand implements Command {
         admin.sendMessage(message);
     }
 
-    private void spawnUnit(UnitType type, Player admin, int amount, Team team, float shield) {
+    private static void spawnUnit(UnitType type, Player admin, int amount, Team team, float shield) {
 
         final int unitCap = Units.getCap(team);
         final int unitsAlive = team.data().countType(type);
@@ -166,12 +142,51 @@ public class SpawnUnitCommand implements Command {
         return Optional.empty();
     }
 
-    private void commandAction(String[] args, Player player) {
+    private void init() {
 
-        if (!player.admin) {
-            // TODO No permissions
-            return;
-        }
+        // I throw an exception because there's no reason to call this twice.
+        if (availableUnits != null) throw new IllegalStateException("Already instanced.");
+        this.availableUnits = StreamSupport.stream(Vars.content.units().spliterator(), false)
+                // Crashes the game.
+                .filter(unitType -> !UnitTypes.block.equals(unitType))
+                // Crashes the game + not present inside UnitTypes.
+                .filter(unitType -> !unitType.name.equalsIgnoreCase("turret-unit-build-tower"))
+                // This one will spawn nothing.
+                .filter(unitType -> !UnitTypes.assemblyDrone.equals(unitType))
+                // I sort by alphabetical order. (Kind of)
+                .sorted((u1, u2) -> u1.name.compareToIgnoreCase(u2.name))
+                .toArray(UnitType[]::new);
+
+        // The player is always found inside the map since added the moment the command is issued.
+        this.menuId = Menus.registerMenu((player, option) -> activeMenus.get(player).updateMenu(option));
+        // I do this to avoid memory leaks.
+        Events.on(EventType.PlayerJoin.class, e -> activeMenus.remove(e.player));
+    }
+
+    @Override
+    public String name() {
+        return "spawn";
+    }
+
+    @Override
+    public String params() {
+        return "<list/unit> [amount] [team] [shield]";
+    }
+
+    @Override
+    public String description() {
+        return "Spawns a unit.";
+    }
+
+    @Override
+    public boolean hasRequiredRoles(Player player, String[] args) {
+        return player.admin();
+    }
+
+    @Override
+    public void clientAction(Player player, String[] args) {
+
+        if (availableUnits == null) init();
 
         // I do this to avoid having problems with colors later on.
         for (int i = 0; i < args.length; i++) {
@@ -207,8 +222,8 @@ public class SpawnUnitCommand implements Command {
     }
 
     @Override
-    public void registerClientCommands(CommandHandler handler) {
-        handler.register("spawn", "<list/unit> [amount] [team] [shield]", "Spawns a unit.", this::commandAction);
+    public void noPermissionsAction(Player player, String[] args) {
+        player.sendMessage(NOT_ENOUGH_PERMISSION);
     }
 
     /**
