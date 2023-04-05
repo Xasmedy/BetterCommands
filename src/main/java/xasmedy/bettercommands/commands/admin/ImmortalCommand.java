@@ -12,9 +12,12 @@ import mindustry.gen.Player;
 import xasmedy.mapie.command.AbstractCommand;
 import java.util.HashMap;
 import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
+import static xasmedy.bettercommands.Util.PREFIX;
 
 public class ImmortalCommand extends AbstractCommand {
 
+    private static final String IMMORTAL_MESSAGE = "%s[orange]You now have infinite shield.";
+    private static final String MORTAL_MESSAGE = "%s[orange]You are now mortal.";
     private final HashMap<Player, Float> immortalPlayers = new HashMap<>();
 
     @Override
@@ -34,11 +37,19 @@ public class ImmortalCommand extends AbstractCommand {
 
     @Override
     public void clientAction(Player player, String[] args) {
+
         final Float originalShield = immortalPlayers.remove(player);
         if (originalShield == null) { // The player isn't immortal.
             immortalPlayers.put(player, player.unit().shield());
             player.unit().shield(Float.MAX_VALUE);
-        } else player.unit().shield(originalShield);
+            final String message = String.format(IMMORTAL_MESSAGE, PREFIX);
+            player.sendMessage(message);
+            return;
+        }
+
+        player.unit().shield(originalShield);
+        final String message = String.format(MORTAL_MESSAGE, PREFIX);
+        player.sendMessage(message);
     }
 
     @Override
