@@ -78,7 +78,9 @@ public class DestructorCommand extends AbstractCommand {
     }
 
     public void turboDestructor(Player player) {
-
+        
+        if (player.unit() == null) return;
+        
         circle.set(player.x(), player.y(), Math.max(player.unit().hitSize() * 3f, 100f)); // adjust as needed
 
         float pointCount = 50f; // adjust as needed
