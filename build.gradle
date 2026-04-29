@@ -7,28 +7,29 @@ plugins {
 
 repositories {
     mavenCentral()
-    maven { url 'https://www.jitpack.io' }
+    maven{ url 'https://www.jitpack.io' }
 }
 
 sourceCompatibility = JavaVersion.VERSION_17
-version = 'v0.7'
+version = 'v0.7.1'
 mainClassName = "xasmedy.bettercommands.BetterCommands"
 
 ext {
-    mindustry = 'v143'
-    mapie = 'v1.1'
+    mindustry = 'v146'
+    mapie = 'v1.1.1'
 }
 
 dependencies {
-    implementation "com.github.Anuken.Mindustry:core:${mindustry}"
-    implementation "com.github.Xasmedy:MAPIE:${mapie}"
+    compileOnly "com.github.Anuken.Arc:arc-core:$mindustry"
+    compileOnly "com.github.Anuken.Mindustry:core:$mindustry"
+    implementation "com.github.Xasmedy:MAPIE:$mapie"
 }
 
 
 jar {
     manifest {
         attributes(
-                "Class-Path": "libs/MAPIE.jar",
+                "Class-Path": "libs/MAPIE-${mapie}.jar",
                 "version": this.version
         )
     }
