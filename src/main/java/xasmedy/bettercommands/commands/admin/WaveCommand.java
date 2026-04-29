@@ -14,8 +14,7 @@ import mindustry.Vars;
 import mindustry.game.EventType;
 import mindustry.gen.Call;
 import mindustry.gen.Player;
-import xasmedy.bettercommands.BetterCommands;
-import xasmedy.mapie.command.AbstractCommand;
+import xasmedy.bettercommands.AbstractAdminCommand;
 import xasmedy.mapie.menu.buttons.UnmodifiableButton;
 import xasmedy.mapie.menu.panels.FollowUpPanel;
 import xasmedy.mapie.menu.parsers.ButtonsLayout;
@@ -25,10 +24,10 @@ import java.util.List;
 import java.util.Objects;
 import java.util.OptionalInt;
 import java.util.function.BiConsumer;
-import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
+
 import static xasmedy.bettercommands.Util.PREFIX;
 
-public class WaveCommand extends AbstractCommand {
+public class WaveCommand extends AbstractAdminCommand {
 
     private static final int MAX_WAVES = 20;
     private static final String INVALID_OPTION = "%s[scarlet]The option [red]%s[] is not valid.";
@@ -142,7 +141,7 @@ public class WaveCommand extends AbstractCommand {
 
     @Override
     public String params() {
-        return "<[accent]help[gray]/[red]run[gray]/[pink]jump[gray]/[sky]skip[gray]/[orange]repeat[gray]> [[[#bababa]args[]]";
+        return "[[[accent]help[]/[red]run[]/[pink]jump[]/[sky]skip[]/[orange]repeat[]] [[[#bababa]args...[]]";
     }
 
     @Override
@@ -151,12 +150,10 @@ public class WaveCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean hasRequiredRoles(Player player, String[] args) {
-        return player.admin();
-    }
-
-    @Override
     public void clientAction(Player player, String[] args) {
+        if (argsLenCheck(player, args))
+            return;
+
         final BiConsumer<String[], Player> action = actions.get(args[0].toLowerCase());
         if (action == null) {
             final String message = String.format(INVALID_OPTION, PREFIX, args[0]);
@@ -164,11 +161,6 @@ public class WaveCommand extends AbstractCommand {
             return;
         }
         action.accept(args, player);
-    }
-
-    @Override
-    public void noPermissionsAction(Player player, String[] args) {
-        player.sendMessage(NOT_ENOUGH_PERMISSION);
     }
 
     private static final class HelpMenu {
@@ -203,7 +195,7 @@ public class WaveCommand extends AbstractCommand {
                     [orange]If no value is specified, it will run the current wave one time.
                     """, layout);
 
-            final FollowUpPanel<UnmodifiableTemplate> panel = new FollowUpPanel<>(BetterCommands.get().menu(), player, mainTemplate);
+            final FollowUpPanel<UnmodifiableTemplate> panel = new FollowUpPanel<>(player, mainTemplate);
             layout.addColumn(0, List.of(
                     new UnmodifiableButton("[red]Run", () -> panel.display(runTemplate)),
                     new UnmodifiableButton("[blue]Main", () -> panel.display(mainTemplate)),

@@ -9,12 +9,13 @@
 package xasmedy.bettercommands.commands.admin;
 
 import mindustry.gen.Player;
-import xasmedy.mapie.command.AbstractCommand;
+import xasmedy.bettercommands.AbstractAdminCommand;
+
 import java.util.HashMap;
-import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
+
 import static xasmedy.bettercommands.Util.PREFIX;
 
-public class ImmortalCommand extends AbstractCommand {
+public class ImmortalCommand extends AbstractAdminCommand {
 
     private static final String IMMORTAL_MESSAGE = "%s[orange]You now have infinite shield.";
     private static final String MORTAL_MESSAGE = "%s[orange]You are now mortal.";
@@ -28,11 +29,6 @@ public class ImmortalCommand extends AbstractCommand {
     @Override
     public String description() {
         return "Gives you max shield.";
-    }
-
-    @Override
-    public boolean hasRequiredRoles(Player player, String[] args) {
-        return player.admin();
     }
 
     @Override
@@ -50,10 +46,5 @@ public class ImmortalCommand extends AbstractCommand {
         player.unit().shield(originalShield);
         final String message = String.format(MORTAL_MESSAGE, PREFIX);
         player.sendMessage(message);
-    }
-
-    @Override
-    public void noPermissionsAction(Player player, String[] args) {
-        player.sendMessage(NOT_ENOUGH_PERMISSION);
     }
 }

@@ -17,9 +17,8 @@ import mindustry.gen.Call;
 import mindustry.gen.Player;
 import mindustry.gen.Unit;
 import mindustry.type.UnitType;
-import xasmedy.bettercommands.BetterCommands;
+import xasmedy.bettercommands.AbstractAdminCommand;
 import xasmedy.bettercommands.Util;
-import xasmedy.mapie.command.AbstractCommand;
 import xasmedy.mapie.menu.*;
 import xasmedy.mapie.menu.buttons.SupplierButton;
 import xasmedy.mapie.menu.buttons.UnmodifiableButton;
@@ -32,7 +31,7 @@ import java.util.Optional;
 import java.util.stream.StreamSupport;
 import static xasmedy.bettercommands.Util.*;
 
-public class SpawnUnitCommand extends AbstractCommand {
+public class SpawnUnitCommand extends AbstractAdminCommand {
 
     private static final String UNIT_NOT_FOUND_ERROR = "%s[scarlet]Could not find the unit [orange]%s[].";
     private static final String INVALID_SPAWN_ERROR = "%s[scarlet]The unit [orange]%s[] cannot be spawned at this location.";
@@ -167,7 +166,7 @@ public class SpawnUnitCommand extends AbstractCommand {
 
     @Override
     public String params() {
-        return "<list/unit> [amount] [team] [shield]";
+        return "[list/unit] [amount] [team] [shield...]";
     }
 
     @Override
@@ -176,12 +175,9 @@ public class SpawnUnitCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean hasRequiredRoles(Player player, String[] args) {
-        return player.admin();
-    }
-
-    @Override
     public void clientAction(Player player, String[] args) {
+        if (argsLenCheck(player, args))
+            return;
 
         if (availableUnits == null) init();
 
@@ -219,11 +215,6 @@ public class SpawnUnitCommand extends AbstractCommand {
         });
     }
 
-    @Override
-    public void noPermissionsAction(Player player, String[] args) {
-        player.sendMessage(NOT_ENOUGH_PERMISSION);
-    }
-
     /**
      * A non-hardcoded menu that won't break in case of future mindustry updates or when the {@link HelpMenu#UNITS_PER_PAGE} value is changed.
      */
@@ -240,7 +231,7 @@ public class SpawnUnitCommand extends AbstractCommand {
                     () -> "Units List [" + (currentPage + 1) + "/" + getMaxPages() + "]",
                     this::getMenuMessage);
 
-            this.panel = new FollowUpPanel<>(BetterCommands.get().menu(), player, template);
+            this.panel = new FollowUpPanel<>(player, template);
 
             final SupplierButton prev = new SupplierButton(() -> (isAtFirstPage() ? "[#bababa]" : "[sky]") + '\ue802').listener(() -> {
                 if (!isAtFirstPage()) currentPage--;

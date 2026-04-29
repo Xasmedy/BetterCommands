@@ -14,13 +14,14 @@ import mindustry.game.EventType;
 import mindustry.game.Team;
 import mindustry.gen.Call;
 import mindustry.gen.Player;
-import xasmedy.mapie.command.AbstractCommand;
+import xasmedy.bettercommands.AbstractAdminCommand;
+
 import java.util.Arrays;
 import java.util.Optional;
-import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
+
 import static xasmedy.bettercommands.Util.PREFIX;
 
-public class GameOverCommand extends AbstractCommand {
+public class GameOverCommand extends AbstractAdminCommand {
 
     private static final String GAMEOVER_MESSAGE = "%s[red]Game-over by [gold]%s[]!";
     private static final String INVALID_TEAM_MESSAGE = "%s[scarlet]The team [orange]%s[] is not valid.";
@@ -52,13 +53,11 @@ public class GameOverCommand extends AbstractCommand {
         return "Forces a game-over, in pvp the winning team can be selected.";
     }
 
-    @Override
-    public boolean hasRequiredRoles(Player player, String[] args) {
-        return player.admin();
-    }
 
     @Override
     public void clientAction(Player player, String[] args) {
+        if (argsLenCheck(player, args))
+            return;
 
         final String message = String.format(GAMEOVER_MESSAGE, PREFIX, player.plainName());
         Call.sendMessage(message);
@@ -67,10 +66,5 @@ public class GameOverCommand extends AbstractCommand {
             final String errorMessage = String.format(INVALID_TEAM_MESSAGE, PREFIX, args[0]);
             player.sendMessage(errorMessage);
         });
-    }
-
-    @Override
-    public void noPermissionsAction(Player player, String[] args) {
-        player.sendMessage(NOT_ENOUGH_PERMISSION);
     }
 }

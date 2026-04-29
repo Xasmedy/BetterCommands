@@ -24,12 +24,13 @@ import mindustry.gen.Call;
 import mindustry.gen.Groups;
 import mindustry.gen.Player;
 import mindustry.world.blocks.storage.CoreBlock;
-import xasmedy.mapie.command.AbstractCommand;
+import xasmedy.bettercommands.AbstractAdminCommand;
+
 import java.util.HashSet;
 import static xasmedy.bettercommands.Util.NOT_ENOUGH_PERMISSION;
 import static xasmedy.bettercommands.Util.newUpdateListener;
 
-public class DestructorCommand extends AbstractCommand {
+public class DestructorCommand extends AbstractAdminCommand {
 
     private final HashSet<Player> activeDestructors = new HashSet<>();
     private final Color colorBuffer = new Color();
@@ -78,6 +79,7 @@ public class DestructorCommand extends AbstractCommand {
     }
 
     public void turboDestructor(Player player) {
+        if (player.unit() == null) return;
 
         circle.set(player.x(), player.y(), Math.max(player.unit().hitSize() * 3f, 100f)); // adjust as needed
 
@@ -119,19 +121,9 @@ public class DestructorCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean hasRequiredRoles(Player player, String[] args) {
-        return player.admin();
-    }
-
-    @Override
     public void clientAction(Player player, String[] args) {
         if (activeDestructors.contains(player)) activeDestructors.remove(player);
         else activeDestructors.add(player);
-    }
-
-    @Override
-    public void noPermissionsAction(Player player, String[] args) {
-        player.sendMessage(NOT_ENOUGH_PERMISSION);
     }
 
     @Override
