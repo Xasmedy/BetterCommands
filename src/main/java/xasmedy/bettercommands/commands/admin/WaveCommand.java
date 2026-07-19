@@ -203,7 +203,7 @@ public class WaveCommand extends AbstractCommand {
                     [orange]If no value is specified, it will run the current wave one time.
                     """, layout);
 
-            final FollowUpPanel<UnmodifiableTemplate> panel = new FollowUpPanel<>(BetterCommands.get().menu(), player, mainTemplate);
+            final FollowUpPanel<UnmodifiableTemplate> panel = new FollowUpPanel<>(player, mainTemplate);
             layout.addColumn(0, List.of(
                     new UnmodifiableButton("[red]Run", () -> panel.display(runTemplate)),
                     new UnmodifiableButton("[blue]Main", () -> panel.display(mainTemplate)),

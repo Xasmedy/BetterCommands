@@ -17,7 +17,6 @@ import mindustry.gen.Call;
 import mindustry.gen.Player;
 import mindustry.gen.Unit;
 import mindustry.type.UnitType;
-import xasmedy.bettercommands.BetterCommands;
 import xasmedy.bettercommands.Util;
 import xasmedy.mapie.command.AbstractCommand;
 import xasmedy.mapie.menu.*;
@@ -240,7 +239,7 @@ public class SpawnUnitCommand extends AbstractCommand {
                     () -> "Units List [" + (currentPage + 1) + "/" + getMaxPages() + "]",
                     this::getMenuMessage);
 
-            this.panel = new FollowUpPanel<>(BetterCommands.get().menu(), player, template);
+            this.panel = new FollowUpPanel<>(player, template);
 
             final SupplierButton prev = new SupplierButton(() -> (isAtFirstPage() ? "[#bababa]" : "[sky]") + '\ue802').listener(() -> {
                 if (!isAtFirstPage()) currentPage--;
