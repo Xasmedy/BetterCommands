@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2023 - Semetrix, Xasmedy.
+ * Copyright (c) 2026 - Semetrix, Xasmedy.
  * This file is part of the BetterCommands Project licensed under GNU-GPLv3.
  *
  * The Project source-code can be found at https://github.com/Xasmedy/BetterCommands
