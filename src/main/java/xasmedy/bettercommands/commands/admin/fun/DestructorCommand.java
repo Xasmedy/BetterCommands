@@ -36,6 +36,7 @@ public class DestructorCommand extends AbstractCommand {
     private final Circle circle = new Circle();
     private final ApplicationListener listener = newUpdateListener(this::runTick);
     private final Cons<EventType.PlayerLeave> playerLeaveListener = event -> activeDestructors.remove(event.player);
+    private final Cons<EventType.GameOverEvent> clearAllListener = event -> activeDestructors.clear();
     private int ticks = 0;
 
     private Color setColorForAngle(float t) {
@@ -78,26 +79,27 @@ public class DestructorCommand extends AbstractCommand {
     }
 
     public void turboDestructor(Player player) {
+
+        final var unit = player.unit();
+        if (unit == null) return;
         
-        if (player.unit() == null) return;
-        
-        circle.set(player.x(), player.y(), Math.max(player.unit().hitSize() * 3f, 100f)); // adjust as needed
+        circle.set(unit.x(), unit.y(), Math.max(unit.hitSize() * 3f, 100f)); // adjust as needed
 
         float pointCount = 50f; // adjust as needed
         float angleIncrement = 360f / pointCount;
 
         for (float angle = 0; angle < 360f; angle += angleIncrement) {
 
-            float x = player.x() + circle.radius * Mathf.cosDeg(angle);
-            float y = player.y() + circle.radius * Mathf.sinDeg(angle);
+            float x = unit.x() + circle.radius * Mathf.cosDeg(angle);
+            float y = unit.y() + circle.radius * Mathf.sinDeg(angle);
 
-            float rotatedX = player.x() + (x - player.x());
-            float rotatedY = player.y() + (y - player.y());
+            float rotatedX = unit.x() + (x - unit.x());
+            float rotatedY = unit.y() + (y - unit.y());
 
             // Keep this unreliable, to avoid TCP header and users with bad internet won't suffer as much. (hopefully)
             Call.effect(Fx.shootSmokeSquareBig, rotatedX, rotatedY, angle, setColorForAngle(angle / 360f));
         }
-        dealDamage(player.team());
+        dealDamage(unit.team());
     }
 
     private void runTick() {
@@ -139,6 +141,7 @@ public class DestructorCommand extends AbstractCommand {
     @Override
     protected void init(boolean isServer) {
         Events.on(EventType.PlayerLeave.class, playerLeaveListener);
+        Events.on(EventType.GameOverEvent.class, clearAllListener);
         Core.app.addListener(listener);
     }
 
@@ -146,6 +149,7 @@ public class DestructorCommand extends AbstractCommand {
     protected void clientDispose(Player player, String[] args) {
         if (!activeDestructors.isEmpty()) return;
         Events.remove(EventType.PlayerLeave.class, playerLeaveListener);
+        Events.remove(EventType.GameOverEvent.class, clearAllListener);
         Core.app.removeListener(listener);
         isInit.set(false); // I tell the command manager to run init().
     }

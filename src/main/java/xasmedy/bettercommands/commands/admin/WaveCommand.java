@@ -14,7 +14,6 @@ import mindustry.Vars;
 import mindustry.game.EventType;
 import mindustry.gen.Call;
 import mindustry.gen.Player;
-import xasmedy.bettercommands.BetterCommands;
 import xasmedy.mapie.command.AbstractCommand;
 import xasmedy.mapie.menu.buttons.UnmodifiableButton;
 import xasmedy.mapie.menu.panels.FollowUpPanel;
